@@ -1,7 +1,20 @@
 import { reporters, Runner } from "mocha";
 
-function cypressAzureReporter(runner: any, options: any) {
-  
+interface ReporterOptions {
+  pat: string;
+  organisation: string;
+  project: string;
+  planId: string;
+}
+
+type ReporterOptionKeys = keyof ReporterOptions;
+
+interface Options {
+  reporterOptions: ReporterOptions
+}
+
+function cypressAzureReporter(runner: Runner, options: Options) {
+
   const {
     EVENT_RUN_BEGIN,
     // EVENT_RUN_END,
@@ -13,6 +26,13 @@ function cypressAzureReporter(runner: any, options: any) {
 
   reporters.Base.call(this, runner);
 
+  const { reporterOptions } = options;
+
+  validate(reporterOptions, 'pat');
+  validate(reporterOptions, 'organisation');
+  validate(reporterOptions, 'project');
+  validate(reporterOptions, 'planId');
+
   runner.on(EVENT_RUN_BEGIN, () => {
     write('start\n')
   })
@@ -21,5 +41,14 @@ function cypressAzureReporter(runner: any, options: any) {
 function write(str: string){
   process.stdout.write(str)
 }
+
+function validate (options: ReporterOptions, name: ReporterOptionKeys) {
+  if (options == null) {
+      throw new Error('Missing reporterOptions in cypress.json');
+  }
+  if (options[name] == null) {
+      throw new Error("Missing '" + name + "' value. Please update reporterOptions in cypress.json");
+  }
+};
 
 export = cypressAzureReporter;
