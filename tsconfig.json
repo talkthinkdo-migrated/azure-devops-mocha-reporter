@@ -3,7 +3,7 @@
     "target": "ESNext",
     "lib": ["es2019"],
     "module": "commonjs",
-    "noImplicitAny": true,
+    // "noImplicitAny": true,
     "types": ["jest", "node"],
     "outDir": "./dist",
     "moduleResolution": "node",
@@ -13,5 +13,6 @@
     "allowSyntheticDefaultImports": true,
     "allowJs": true,
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "src/**/*.test.ts"]
 }

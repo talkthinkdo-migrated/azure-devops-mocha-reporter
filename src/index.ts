@@ -34,12 +34,12 @@ function cypressAzureReporter(runner: Runner, options: Options) {
   validate(reporterOptions, 'planId');
 
   runner.on(EVENT_RUN_BEGIN, () => {
-    write('start\n')
+    write('start')
   })
 }
 
-function write(str: string){
-  process.stdout.write(str)
+function write(str: string) {
+  process.stdout.write(str);
 }
 
 function validate (options: ReporterOptions, name: ReporterOptionKeys) {
