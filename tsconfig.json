@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "es2019",
+    "lib": ["es2019"],
+    "module": "commonjs",
+    "noImplicitAny": true,
+    "types": ["jest", "node"],
+    "outDir": "./dist",
+    "moduleResolution": "node",
+    "skipLibCheck": true,
+    "sourceMap": true,
+  },
+  "include": ["src/**/*"]
+}

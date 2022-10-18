@@ -1,0 +1,49 @@
+{
+  "name": "@architectnow/cypress-devops-reporter",
+  "version": "1.0.2",
+  "description": "A DevOps reporter for cypress",
+  "main": "index.js",
+  "private": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "cypress",
+    "devops",
+    "dev ops",
+    "dev-ops",
+    "reporter"
+  ],
+  "author": {
+    "name": "",
+    "email": ""
+  },
+  "license": "MIT",
+  "readmeFilename": "README.md",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "bugs": {
+    "url": ""
+  },
+  "scripts": {
+    "tsc": "tsc",
+    "clean": "rimraf dist",
+    "build": "npm run clean && npm run tsc"
+  },
+  "dependencies": {
+    "axios": "^0.18.0",
+    "btoa": "^1.1.2",
+    "chalk": "^2.4.1",
+    "mocha": "^2.2.5"
+  },
+  "devDependencies": {
+    "@types/chai": "^3.4.34",
+    "@types/mocha": "^2.2.36",
+    "@types/node": "^6.0.58",
+    "chai": "^3.5.0",
+    "rimraf": "^2.5.4",
+    "typescript": "^2.1.4"
+  }
+}
