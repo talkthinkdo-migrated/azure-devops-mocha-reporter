@@ -15,3 +15,13 @@ export enum Outcome {
   InProgress = "InProgress",
   NotImpacted = "NotImpacted",
 }
+
+export enum TestRunState {
+  Unspecified = "Unspecified",
+  NotStarted = "NotStarted",
+  InProgress = "InProgress",
+  Completed = "Completed",
+  Aborted = "Aborted",
+  Waiting = "Waiting",
+  NeedsInvestigation = "NeedsInvestigation",
+}

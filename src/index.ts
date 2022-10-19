@@ -1,7 +1,26 @@
 import { reporters, Runner } from "mocha";
 import { Outcome } from "./enums/testPlan.enums";
-import { addResult, createTestPlan } from "./testPlan";
-import { getCaseIdsFromTitle } from "./utils";
+import {
+  addResult,
+  completeRun,
+  createRun,
+  createTestPlan,
+  filterTestPointsByTestResult,
+  getTestPoints,
+  getTestSuites,
+  mapSuiteIds,
+  mapTestPointToAzureTestResult,
+  submitTestResults,
+} from "./testPlan";
+import {
+  flatten,
+  getCaseIdsFromTitle,
+  map,
+  pipe,
+  pipeLog,
+  tap,
+  write,
+} from "./utils";
 
 interface ReporterOptions {
   pat: string;
@@ -32,30 +51,47 @@ function cypressAzureReporter(runner: Runner, options: Options) {
   const testPlan = createTestPlan(reporterOptions);
 
   runner.on(EVENT_RUN_BEGIN, () => {
-    write("Cypress to azure custom reporter started");
+    write("Cypress Azure reporter started...");
   });
 
   runner.on(EVENT_TEST_PASS, (test) => {
-    write("test passed");
     const testCaseIds = getCaseIdsFromTitle(test.title);
     testCaseIds.forEach((testCaseId) => {
       addResult(testCaseId, Outcome.Passed, testPlan);
     });
   });
   runner.on(EVENT_TEST_FAIL, (test) => {
-    write("test failed");
     const testCaseIds = getCaseIdsFromTitle(test.title);
     testCaseIds.forEach((testCaseId) => {
       addResult(testCaseId, Outcome.Failed, testPlan);
     });
   });
-  runner.on(EVENT_RUN_END, () => {
-    write("test complete");
+  runner.on(EVENT_RUN_END, async () => {
+    try {
+      await pipe(
+        getTestSuites,
+        mapSuiteIds,
+        getTestPoints(testPlan),
+        tap(createRun(testPlan)),
+        flatten,
+        filterTestPointsByTestResult(testPlan),
+        map(mapTestPointToAzureTestResult(testPlan)),
+        submitTestResults(testPlan),
+        completeRun(testPlan),
+        () => write("Cypress Azure reporter complete.")
+      )(testPlan);
+    } catch (error) {
+      write("Cypress Azure reporter failed");
+      write(error.message);
+      write(error.stack);
+      completeRun(
+        testPlan,
+        "Something went wrong with Cypress Azure reporter."
+      );
+    } finally {
+      completeRun(testPlan);
+    }
   });
-}
-
-function write(str: string) {
-  process.stdout.write(str);
 }
 
 function validate(options: ReporterOptions, name: ReporterOptionKeys) {

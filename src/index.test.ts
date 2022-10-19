@@ -61,32 +61,6 @@ describe("validate", () => {
   );
 });
 
-describe("EVENT_RUN_BEGIN", () => {
-  const options = createBaseOptions();
-
-  test("logs start", () => {
-    var suite = {
-      root: false,
-      title: "some title",
-    };
-
-    const runner = createMockRunner(
-      "start",
-      EVENT_RUN_BEGIN,
-      null,
-      null,
-      suite,
-      null
-    );
-
-    runReporter({}, runner, options, false);
-
-    expect(process.stdout.write).toBeCalledWith(
-      "Cypress to azure custom reporter started"
-    );
-  });
-});
-
 describe("should add new passed testResult for all testCaseIds in test title:", () => {
   const theories = [
     { title: "", expectedResultIds: [] },
