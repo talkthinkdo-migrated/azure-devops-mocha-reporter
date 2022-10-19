@@ -29,13 +29,8 @@ export const pipe =
     functions.reduce((chain, func) => chain.then(func), Promise.resolve(input));
 
 export const callApi = async (testPlan: TestPlan, url: string) => {
-  try {
-    const response = await testPlan.azureApiRequest(url);
-    return response.data.value;
-  } catch (error) {
-    write(error.message);
-    write(error.stack);
-  }
+  const response = await testPlan.azureApiRequest(url);
+  return response.data.value;
 };
 
 export const pipeLog = (data: any) => console.log(data);

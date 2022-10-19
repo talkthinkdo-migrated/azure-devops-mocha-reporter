@@ -81,7 +81,7 @@ function cypressAzureReporter(runner: Runner, options: Options) {
         () => write("Cypress Azure reporter complete.")
       )(testPlan);
     } catch (error) {
-      write("Cypress Azure reporter failed");
+      write("Cypress Azure reporter failed with:");
       write(error.message);
       write(error.stack);
       completeRun(
