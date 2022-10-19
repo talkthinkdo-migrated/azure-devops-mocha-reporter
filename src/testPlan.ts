@@ -38,12 +38,15 @@ export const createTestPlan = (options): TestPlan => {
   };
 };
 
-export const addResult =
-  (testCaseId: number, outcome: Outcome) => (testPlan: TestPlan) => {
-    testPlan.testResults.push({
-      testCaseId,
-      outcome,
-    });
+export const addResult = (
+  testCaseId: number,
+  outcome: Outcome,
+  testPlan: TestPlan
+) => {
+  testPlan.testResults.push({
+    testCaseId,
+    outcome,
+  });
 
-    return testPlan;
-  };
+  return testPlan;
+};

@@ -1,4 +1,6 @@
 import { reporters, Runner } from "mocha";
+import { Outcome } from "./enums/testPlan.enums";
+import { addResult, createTestPlan } from "./testPlan";
 import { getCaseIdsFromTitle } from "./utils";
 
 interface ReporterOptions {
@@ -15,16 +17,8 @@ interface Options {
 }
 
 function cypressAzureReporter(runner: Runner, options: Options) {
-  const testPlans: number[] = [];
-
-  const {
-    EVENT_RUN_BEGIN,
-    EVENT_RUN_END,
-    EVENT_TEST_FAIL,
-    EVENT_TEST_PASS,
-    EVENT_SUITE_BEGIN,
-    EVENT_SUITE_END,
-  } = Runner.constants;
+  const { EVENT_RUN_BEGIN, EVENT_RUN_END, EVENT_TEST_FAIL, EVENT_TEST_PASS } =
+    Runner.constants;
 
   reporters.Base.call(this, runner);
 
@@ -35,26 +29,28 @@ function cypressAzureReporter(runner: Runner, options: Options) {
   validate(reporterOptions, "project");
   validate(reporterOptions, "planId");
 
+  const testPlan = createTestPlan(reporterOptions);
+
   runner.on(EVENT_RUN_BEGIN, () => {
-    write("Cypress to azure run started");
+    write("Cypress to azure custom reporter started");
   });
 
+  runner.on(EVENT_TEST_PASS, (test) => {
+    write("test passed");
+    const testCaseIds = getCaseIdsFromTitle(test.title);
+    testCaseIds.forEach((testCaseId) => {
+      addResult(testCaseId, Outcome.Passed, testPlan);
+    });
+  });
   runner.on(EVENT_TEST_FAIL, (test) => {
     write("test failed");
+    const testCaseIds = getCaseIdsFromTitle(test.title);
+    testCaseIds.forEach((testCaseId) => {
+      addResult(testCaseId, Outcome.Failed, testPlan);
+    });
   });
-  runner.on(EVENT_RUN_END, (test) => {
+  runner.on(EVENT_RUN_END, () => {
     write("test complete");
-  });
-  runner.on(EVENT_TEST_PASS, (test) => {
-    const testIds = getCaseIdsFromTitle(test.title);
-    // testPlans = testIds.map();
-    write("test passed");
-  });
-  runner.on(EVENT_SUITE_BEGIN, (test) => {
-    write("test suite started");
-  });
-  runner.on(EVENT_SUITE_END, (test) => {
-    write("test suite ended");
   });
 }
 
