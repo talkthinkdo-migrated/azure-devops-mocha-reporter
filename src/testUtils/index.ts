@@ -52,7 +52,6 @@ function createRunnerFunction(runStr, ifStr1, ifStr2, ifStr3, arg1, arg2) {
     case "pending":
     case "end":
       return function (event, callback) {
-        event;
         if (event === ifStr1) {
           callback();
         }
@@ -158,19 +157,19 @@ export function createRunReporterFunction(ctor) {
    * @return {string[]} Lines of output written to `stdout`
    */
   var runReporter = function (stubSelf, runner, options, tee) {
-    var origStdoutWrite = process.stdout.write;
-    var stdoutWriteStub = jest.spyOn(process.stdout, "write");
+    // var origStdoutWrite = process.stdout.write;
+    jest.spyOn(process.stdout, "write");
     var stdout = [];
 
-    var gather = function (chunk) {
-      stdout.push(chunk);
-      if (tee) {
-        origStdoutWrite.call(process.stdout, chunk);
-      }
-    };
+    // var gather = function (chunk) {
+    //   stdout.push(chunk);
+    //   if (tee) {
+    //     origStdoutWrite.call(process.stdout, chunk);
+    //   }
+    // };
 
     // Reassign stream in order to make a copy of all reporter output
-    stdoutWriteStub.mockImplementation(gather);
+    // stdoutWriteStub.mockImplementation(gather);
 
     // Give `stubSelf` access to `ctor` prototype chain
     Object.setPrototypeOf(stubSelf, ctor.prototype);

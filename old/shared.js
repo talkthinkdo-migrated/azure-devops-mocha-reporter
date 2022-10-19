@@ -6,14 +6,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @returns {any}
  */
 function titleToCaseIds(title) {
-    var caseIds = [];
-    var testCaseIdRegExp = /\bT?C(\d+)\b/g;
-    var m;
-    while ((m = testCaseIdRegExp.exec(title)) !== null) {
-        var caseId = parseInt(m[1]);
-        caseIds.push(caseId);
-    }
-    return caseIds;
+  var caseIds = [];
+  var testCaseIdRegExp = /\bT?C(\d+)\b/g;
+  var m;
+  while ((m = testCaseIdRegExp.exec(title)) !== null) {
+    var caseId = parseInt(m[1]);
+    caseIds.push(caseId);
+  }
+  return caseIds;
 }
 exports.titleToCaseIds = titleToCaseIds;
 //# sourceMappingURL=shared.js.map

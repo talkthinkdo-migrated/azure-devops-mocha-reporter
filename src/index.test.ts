@@ -2,12 +2,13 @@ import cypressAzureReporter from "./index";
 import { Runner, Suite } from 'mocha'
 import theoretically from 'jest-theories';
 import { createMockRunner, createRunReporterFunction } from './testUtils'
+import * as utils from './utils';
 
 const {
   EVENT_RUN_BEGIN,
   // EVENT_RUN_END,
   // EVENT_TEST_FAIL,
-  // EVENT_TEST_PASS,
+  EVENT_TEST_PASS,
   EVENT_SUITE_BEGIN,
   EVENT_SUITE_END
 } = Runner.constants;
@@ -73,9 +74,41 @@ describe('EVENT_RUN_BEGIN', () => {
       null
     );
     
-    runReporter(this, runner, options, false);
+    runReporter({}, runner, options, false);
 
-    expect(process.stdout.write).toBeCalledWith(`start`)
+    expect(process.stdout.write).toBeCalledWith(`Cypress to azure run started`)
+  })
+})
+
+describe('EVENT_RUN_PASS', () => {
+  test('should call `getCaseIdsFromTitle`', () => {
+    const mockGetCaseIdsFromTitle = jest.spyOn(utils, 'getCaseIdsFromTitle');
+
+    const options = createBaseOptions();
+
+    const testTitle = 'test title #1234';
+
+    var test = {
+      duration: 1,
+      slow: function () {
+        return 2;
+      },
+      title: testTitle
+    };
+
+    const runner = createMockRunner(
+      'pass',
+      EVENT_TEST_PASS,
+      null,
+      null,
+      test,
+      null
+    );
+    
+    runReporter({}, runner, options, false);
+
+    expect(mockGetCaseIdsFromTitle).toHaveBeenCalledWith(testTitle);
+
   })
 })
 
