@@ -1,7 +1,7 @@
 import { Outcome } from "../enums/testPlan.enums";
 import { AxiosInstance } from "axios";
 
-interface TestResult {
+export interface TestResult {
   testCaseId: number;
   outcome: Outcome;
 }
@@ -13,4 +13,17 @@ export interface TestPlan {
   azureApiRequest: AxiosInstance;
   baseUrl: string;
   testRun: any;
+}
+
+export interface TestSuite {
+  id: number;
+}
+
+interface TestCaseReference {
+  id: number;
+  name: string;
+}
+export interface TestPoint {
+  id: string;
+  testCaseReference: TestCaseReference;
 }

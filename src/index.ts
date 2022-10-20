@@ -1,4 +1,10 @@
 import { reporters, Runner } from "mocha";
+import {
+  completeRun,
+  createRun,
+  getTestSuites,
+  submitTestResults,
+} from "./azureApiUtils";
 import { Outcome } from "./enums/testPlan.enums";
 import {
   MochaReporterConfig,
@@ -7,25 +13,13 @@ import {
 } from "./interfaces/reporter.interfaces";
 import {
   addResult,
-  completeRun,
-  createRun,
   createTestPlan,
   filterTestPointsByTestResult,
   getTestPoints,
-  getTestSuites,
   mapSuiteIds,
   mapTestPointToAzureTestResult,
-  submitTestResults,
 } from "./testPlan";
-import {
-  flatten,
-  getCaseIdsFromTitle,
-  map,
-  pipe,
-  pipeLog,
-  tap,
-  write,
-} from "./utils";
+import { flatten, getCaseIdsFromTitle, map, pipe, tap, write } from "./utils";
 
 function cypressAzureReporter(runner: Runner, options: MochaReporterConfig) {
   const { EVENT_RUN_BEGIN, EVENT_RUN_END, EVENT_TEST_FAIL, EVENT_TEST_PASS } =
@@ -65,7 +59,7 @@ function cypressAzureReporter(runner: Runner, options: MochaReporterConfig) {
         getTestSuites,
         mapSuiteIds,
         getTestPoints(testPlan),
-        tap(createRun(testPlan)),
+        tap(createRun(testPlan)), // <- create run before continuing
         flatten,
         filterTestPointsByTestResult(testPlan),
         map(mapTestPointToAzureTestResult(testPlan)),

@@ -10,7 +10,7 @@ export function getCaseIdsFromTitle(title: string): number[] {
   const testCaseIdRegExp = /\bT?C(\d+)\b/g;
   let m: RegExpExecArray;
   while ((m = testCaseIdRegExp.exec(title)) !== null) {
-    const caseId: Number = parseInt(m[1]);
+    const caseId: number = parseInt(m[1]);
     caseIds.push(caseId);
   }
   return caseIds;
@@ -24,14 +24,12 @@ export function write(str: string) {
  * async pipe function
  */
 export const pipe =
-  (...functions) =>
-  (input) =>
-    functions.reduce((chain, func) => chain.then(func), Promise.resolve(input));
-
-export const callApi = async (testPlan: TestPlan, url: string) => {
-  const response = await testPlan.azureApiRequest(url);
-  return response.data.value;
-};
+  (...functions: any) =>
+  (input: any) =>
+    functions.reduce(
+      (previous: any, func: any) => previous.then(func),
+      Promise.resolve(input)
+    );
 
 export const pipeLog = (data: any) => console.log(data);
 
@@ -40,10 +38,11 @@ export const pipeLog = (data: any) => console.log(data);
  */
 export const flatten = (array: any[]) => array.flat();
 
+type MapFunc = (item: any, index?: number) => any;
 /**
  * pipeable array.map
  */
-export const map = (func) => (array: any[]) => array.map(func);
+export const map = (func: MapFunc) => (array: any[]) => array.map(func);
 
 /**
  * Performs given func, then returns given data
@@ -51,7 +50,7 @@ export const map = (func) => (array: any[]) => array.map(func);
  * @param func - side effect function
  * @returns given data
  */
-export const tap = (func) => async (data: any) => {
+export const tap = (func: Function) => async (data: any) => {
   await func(data);
   return data;
 };
