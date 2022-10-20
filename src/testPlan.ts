@@ -16,6 +16,7 @@ export const createTestPlan = (options: ReporterOptions): TestPlan => {
   const project = options.project;
   const planId = options.planId;
   const runName = options.runName;
+
   const azureApiRequest = axios.create({
     headers: {
       Authorization:
@@ -24,15 +25,13 @@ export const createTestPlan = (options: ReporterOptions): TestPlan => {
     params: {
       Authorization: "Basic " + options.pat,
     },
+    baseURL: "https://dev.azure.com/" + organisation + "/" + project + "/_apis",
   });
-  const baseUrl =
-    "https://dev.azure.com/" + organisation + "/" + project + "/_apis";
 
   return {
     testResults,
     azureApiRequest,
     planId,
-    baseUrl,
     runName,
     testRun,
   };

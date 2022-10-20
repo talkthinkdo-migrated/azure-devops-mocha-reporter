@@ -11,7 +11,6 @@ export interface TestPlan {
   planId: string;
   runName: string;
   azureApiRequest: AxiosInstance;
-  baseUrl: string;
   testRun: any;
 }
 

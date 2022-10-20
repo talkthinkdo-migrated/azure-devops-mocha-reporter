@@ -2,7 +2,7 @@ import { Outcome, TestRunState } from "./enums/testPlan.enums";
 import { TestPlan, TestResult } from "./interfaces/testPlan.interfaces";
 import { write } from "./utils";
 
-export const callApi = async (testPlan: TestPlan, url: string) => {
+export const apiGet = async (testPlan: TestPlan, url: string) => {
   const response = await testPlan.azureApiRequest(url);
   return response.data.value;
 };
@@ -12,21 +12,21 @@ export const callApi = async (testPlan: TestPlan, url: string) => {
  * @param testPlan
  */
 export const getTestSuites = async (testPlan: TestPlan) =>
-  callApi(
+  apiGet(
     testPlan,
-    `${testPlan.baseUrl}/testplan/Plans/${testPlan.planId}/suites?api-version=7.1-preview.1`
+    `/testplan/Plans/${testPlan.planId}/suites?api-version=7.1-preview.1`
   );
 
 export const getTestPointsForSuite =
   (testPlan: TestPlan) => async (suiteId: number) =>
-    callApi(
+    apiGet(
       testPlan,
-      `${testPlan.baseUrl}/testplan/Plans/${testPlan.planId}/Suites/${suiteId}/TestPoint?api-version=7.1-preview.2`
+      `/testplan/Plans/${testPlan.planId}/Suites/${suiteId}/TestPoint?api-version=7.1-preview.2`
     );
 
 export const createRun = (testPlan: TestPlan) => async () => {
   const response = await testPlan.azureApiRequest.post(
-    `${testPlan.baseUrl}/test/runs?api-version=7.1-preview.3`,
+    `/test/runs?api-version=7.1-preview.3`,
     {
       automated: true,
       pointIds: [],
@@ -47,7 +47,7 @@ export const completeRun = async (
 ) => {
   if (testPlan.testRun?.id !== null) {
     const response = await testPlan.azureApiRequest.patch(
-      `${testPlan.baseUrl}/test/runs/${testPlan.testRun.id}?api-version=7.1-preview.3`,
+      `/test/runs/${testPlan.testRun.id}?api-version=7.1-preview.3`,
       {
         state: TestRunState.Completed,
         errorMessage,
@@ -63,7 +63,7 @@ export const submitTestResults =
       throw new Error("TestRun has not been prepared yet for this TestPlan.");
     }
     await testPlan.azureApiRequest.post(
-      `${testPlan.baseUrl}/test/runs/${testPlan.testRun.id}/results?api-version=7.1-preview.6`,
+      `/test/runs/${testPlan.testRun.id}/results?api-version=7.1-preview.6`,
       testResults
     );
 

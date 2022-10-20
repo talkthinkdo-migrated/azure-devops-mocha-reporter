@@ -76,7 +76,7 @@ const createRunnerFunction = (
   arg1: any | null,
   arg2: any | null
 ) => {
-  var test = null;
+  var test: string | null = null;
   switch (runStr) {
     case "start":
     case "pending":
@@ -191,7 +191,7 @@ export function createRunReporterFunction(ctor: Function) {
     options: MochaReporterConfig
   ): string[] {
     jest.spyOn(process.stdout, "write");
-    var stdout = [];
+    const stdout: string[] = [];
 
     Object.setPrototypeOf(stubSelf, ctor.prototype);
 
