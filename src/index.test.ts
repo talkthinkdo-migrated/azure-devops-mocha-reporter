@@ -2,18 +2,10 @@ import cypressAzureReporter from "./index";
 import { Runner, Suite } from "mocha";
 import theoretically from "jest-theories";
 import { createMockRunner, createRunReporterFunction } from "./testUtils";
-import * as utils from "./utils";
 import * as testPlan from "./testPlan";
 import { Outcome } from "./enums/testPlan.enums";
 
-const {
-  EVENT_RUN_BEGIN,
-  // EVENT_RUN_END,
-  EVENT_TEST_FAIL,
-  EVENT_TEST_PASS,
-  EVENT_SUITE_BEGIN,
-  EVENT_SUITE_END,
-} = Runner.constants;
+const { EVENT_TEST_FAIL, EVENT_TEST_PASS } = Runner.constants;
 
 const runReporter = createRunReporterFunction(cypressAzureReporter);
 
@@ -23,6 +15,7 @@ const createBaseOptions = () => ({
     organisation: "",
     planId: "",
     project: "",
+    runName: "",
   },
 });
 
@@ -90,7 +83,7 @@ describe("should add new passed testResult for all testCaseIds in test title:", 
       null
     );
 
-    runReporter({}, runner, options, false);
+    runReporter({}, runner, options);
 
     expect(mockAddResult).toHaveBeenCalledTimes(expectedResultIds.length);
 
@@ -140,7 +133,7 @@ describe("should add new failed testResult for all testCaseIds in test with titl
       null
     );
 
-    runReporter({}, runner, options, false);
+    runReporter({}, runner, options);
 
     expect(mockAddResult).toHaveBeenCalledTimes(expectedResultIds.length);
 

@@ -3,18 +3,41 @@
 --------------------------------------------------------------------------------------------- 
 */
 
+import { MochaReporterConfig } from "../interfaces/reporter.interfaces";
+
+interface Runner {
+  on: Function;
+  once: Function;
+}
+
+type CreateRunner = (
+  runStr: string,
+  ifStr1: string,
+  ifStr2: string | null,
+  ifStr3: string | null,
+  arg1: any | null,
+  arg2: any | null
+) => Runner;
+
 /**
  * Creates a mock runner object.
  *
- * @param {string} runStr - argument that defines the runnerEvent
- * @param {string} ifStr1 - runner event
- * @param {(string|null)} [ifStr2] - runner event
- * @param {(string|null)} [ifStr3] - runner event
- * @param {(*|null)} [arg1] - variable to be added to event handler's scope
- * @param {(*|null)} [arg2] - variable to be added to event handler's scope
- * @return {Object} mock runner instance
+ * @param runStr - argument that defines the runnerEvent
+ * @param ifStr1 - runner event
+ * @param [ifStr2] - runner event
+ * @param [ifStr3] - runner event
+ * @param [arg1] - variable to be added to event handler's scope
+ * @param [arg2] - variable to be added to event handler's scope
+ * @return mock runner instance
  */
-export function createMockRunner(runStr, ifStr1, ifStr2, ifStr3, arg1, arg2) {
+export const createMockRunner: CreateRunner = (
+  runStr,
+  ifStr1,
+  ifStr2,
+  ifStr3,
+  arg1,
+  arg2
+) => {
   var runnerFunction = createRunnerFunction(
     runStr,
     ifStr1,
@@ -29,7 +52,7 @@ export function createMockRunner(runStr, ifStr1, ifStr2, ifStr3, arg1, arg2) {
   };
   // createStatsCollector(mockRunner);
   return mockRunner;
-}
+};
 
 /**
  * Creates an event handler function to be used by the runner.
@@ -37,21 +60,28 @@ export function createMockRunner(runStr, ifStr1, ifStr2, ifStr3, arg1, arg2) {
  * @description
  * Arguments 'ifStr1', 'ifStr2', and 'ifStr3' should be `Runner.constants`.
  *
- * @param {string} runStr - argument that defines the runnerEvent
- * @param {string} ifStr1 - runner event
- * @param {(string|null)} [ifStr2] - runner event
- * @param {(string|null)} [ifStr3] - runner event
- * @param {(*|null)} [arg1] - variable to be added to event handler's scope
- * @param {(*|null)} [arg2] - variable to be added to event handler's scope
- * @return {Function} event handler for the requested runner events
+ * @param runStr - argument that defines the runnerEvent
+ * @param ifStr1 - runner event
+ * @param [ifStr2] - runner event
+ * @param [ifStr3] - runner event
+ * @param [arg1] - variable to be added to event handler's scope
+ * @param [arg2] - variable to be added to event handler's scope
+ * @return event handler for the requested runner events
  */
-function createRunnerFunction(runStr, ifStr1, ifStr2, ifStr3, arg1, arg2) {
+const createRunnerFunction = (
+  runStr: string,
+  ifStr1: string,
+  ifStr2: string | null,
+  ifStr3: string | null,
+  arg1: any | null,
+  arg2: any | null
+) => {
   var test = null;
   switch (runStr) {
     case "start":
     case "pending":
     case "end":
-      return function (event, callback) {
+      return function (event: string, callback: Function) {
         if (event === ifStr1) {
           callback();
         }
@@ -63,7 +93,7 @@ function createRunnerFunction(runStr, ifStr1, ifStr2, ifStr3, arg1, arg2) {
     case "suite end":
     case "test end":
       test = arg1;
-      return function (event, callback) {
+      return function (event: string, callback: Function) {
         if (event === ifStr1) {
           callback(test);
         }
@@ -71,14 +101,14 @@ function createRunnerFunction(runStr, ifStr1, ifStr2, ifStr3, arg1, arg2) {
     case "fail two args":
       test = arg1;
       var expectedError = arg2;
-      return function (event, callback) {
+      return function (event: string, callback: Function) {
         if (event === ifStr1) {
           callback(test, expectedError);
         }
       };
     case "start test":
       test = arg1;
-      return function (event, callback) {
+      return function (event: string, callback: Function) {
         if (event === ifStr1) {
           callback();
         }
@@ -88,7 +118,7 @@ function createRunnerFunction(runStr, ifStr1, ifStr2, ifStr3, arg1, arg2) {
       };
     case "suite suite end":
       var expectedSuite = arg1;
-      return function (event, callback) {
+      return function (event: string, callback: Function) {
         if (event === ifStr1) {
           callback(expectedSuite);
         }
@@ -101,7 +131,7 @@ function createRunnerFunction(runStr, ifStr1, ifStr2, ifStr3, arg1, arg2) {
       };
     case "pass end":
       test = arg1;
-      return function (event, callback) {
+      return function (event: string, callback: Function) {
         if (event === ifStr1) {
           callback(test);
         }
@@ -112,7 +142,7 @@ function createRunnerFunction(runStr, ifStr1, ifStr2, ifStr3, arg1, arg2) {
     case "test end fail":
       test = arg1;
       var error = arg2;
-      return function (event, callback) {
+      return function (event: string, callback: Function) {
         if (event === ifStr1) {
           callback();
         }
@@ -121,7 +151,7 @@ function createRunnerFunction(runStr, ifStr1, ifStr2, ifStr3, arg1, arg2) {
         }
       };
     case "fail end pass":
-      return function (event, callback) {
+      return function (event: string, callback: Function) {
         test = arg1;
         if (event === ifStr1) {
           callback(test, {});
@@ -138,7 +168,7 @@ function createRunnerFunction(runStr, ifStr1, ifStr2, ifStr3, arg1, arg2) {
         "This function does not support the runner string specified."
       );
   }
-}
+};
 
 /**
  * Creates closure with reference to the reporter class constructor.
@@ -146,32 +176,23 @@ function createRunnerFunction(runStr, ifStr1, ifStr2, ifStr3, arg1, arg2) {
  * @param {Function} ctor - Reporter class constructor
  * @return {createRunReporterFunction~runReporter}
  */
-export function createRunReporterFunction(ctor) {
+export function createRunReporterFunction(ctor: Function) {
   /**
    * Run reporter using stream reassignment to capture output.
    *
-   * @param {Object} stubSelf - Reporter-like stub instance
-   * @param {Runner} runner - Mock instance
-   * @param {Object} [options] - Reporter configuration settings
-   * @param {boolean} [tee=false] - Whether to echo output to screen
-   * @return {string[]} Lines of output written to `stdout`
+   * @param stubSelf - Reporter-like stub instance
+   * @param runner - Mock instance
+   * @param [options] - Reporter configuration settings
+   * @return Lines of output written to `stdout`
    */
-  var runReporter = function (stubSelf, runner, options, tee) {
-    // var origStdoutWrite = process.stdout.write;
+  var runReporter = function (
+    stubSelf: any,
+    runner: Runner,
+    options: MochaReporterConfig
+  ): string[] {
     jest.spyOn(process.stdout, "write");
     var stdout = [];
 
-    // var gather = function (chunk) {
-    //   stdout.push(chunk);
-    //   if (tee) {
-    //     origStdoutWrite.call(process.stdout, chunk);
-    //   }
-    // };
-
-    // Reassign stream in order to make a copy of all reporter output
-    // stdoutWriteStub.mockImplementation(gather);
-
-    // Give `stubSelf` access to `ctor` prototype chain
     Object.setPrototypeOf(stubSelf, ctor.prototype);
 
     ctor.call(stubSelf, runner, options);

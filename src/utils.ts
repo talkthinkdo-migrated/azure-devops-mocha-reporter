@@ -1,4 +1,4 @@
-import { TestPlan } from "./testPlan";
+import { TestPlan } from "./interfaces/testPlan.interfaces";
 
 /**
  * Search for all applicable test cases

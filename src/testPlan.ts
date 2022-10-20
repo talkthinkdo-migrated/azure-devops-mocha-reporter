@@ -1,30 +1,14 @@
-import axios, { AxiosInstance } from "axios";
+import axios from "axios";
 import { Outcome, TestRunState } from "./enums/testPlan.enums";
+import { ReporterOptions } from "./interfaces/reporter.interfaces";
+import { TestPlan } from "./interfaces/testPlan.interfaces";
 import { callApi, write } from "./utils";
 
-interface TestResult {
-  testCaseId: number;
-  outcome: Outcome;
-}
-
-interface TestPoint {}
-
-export interface TestPlan {
-  testResults: Array<TestResult>;
-  planId: string;
-  runName: string;
-  azureApiRequest: AxiosInstance;
-  baseUrl: string;
-  testRun: any;
-}
-
-export const createTestPlan = (options): TestPlan => {
+export const createTestPlan = (options: ReporterOptions): TestPlan => {
   const testResults = [];
   let testRun = null;
-  // const prelimTestResults = [];
   const organisation = options.organisation;
   const project = options.project;
-  // const suiteId = options.suiteId;
   const planId = options.planId;
   const runName = options.runName;
   const azureApiRequest = axios.create({
@@ -54,6 +38,7 @@ export const addResult = (
   outcome: Outcome,
   testPlan: TestPlan
 ) => {
+  testPlan?.testResults; // ?
   testPlan.testResults.push({
     testCaseId,
     outcome,

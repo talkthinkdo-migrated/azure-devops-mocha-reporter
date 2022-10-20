@@ -1,6 +1,11 @@
 import { reporters, Runner } from "mocha";
 import { Outcome } from "./enums/testPlan.enums";
 import {
+  MochaReporterConfig,
+  ReporterOptionKeys,
+  ReporterOptions,
+} from "./interfaces/reporter.interfaces";
+import {
   addResult,
   completeRun,
   createRun,
@@ -22,20 +27,7 @@ import {
   write,
 } from "./utils";
 
-interface ReporterOptions {
-  pat: string;
-  organisation: string;
-  project: string;
-  planId: string;
-}
-
-type ReporterOptionKeys = keyof ReporterOptions;
-
-interface Options {
-  reporterOptions: ReporterOptions;
-}
-
-function cypressAzureReporter(runner: Runner, options: Options) {
+function cypressAzureReporter(runner: Runner, options: MochaReporterConfig) {
   const { EVENT_RUN_BEGIN, EVENT_RUN_END, EVENT_TEST_FAIL, EVENT_TEST_PASS } =
     Runner.constants;
 
@@ -47,6 +39,7 @@ function cypressAzureReporter(runner: Runner, options: Options) {
   validate(reporterOptions, "organisation");
   validate(reporterOptions, "project");
   validate(reporterOptions, "planId");
+  validate(reporterOptions, "runName");
 
   const testPlan = createTestPlan(reporterOptions);
 
