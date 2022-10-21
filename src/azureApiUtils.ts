@@ -3,7 +3,7 @@ import { TestPlan, TestResult } from "./interfaces/testPlan.interfaces";
 import { write } from "./utils";
 
 export const apiGet = async (testPlan: TestPlan, url: string) => {
-  const response = await testPlan.azureApiRequest(url);
+  const response = await testPlan.azureApiRequest.get(url);
   return response.data.value;
 };
 
@@ -14,17 +14,17 @@ export const apiGet = async (testPlan: TestPlan, url: string) => {
 export const getTestSuites = async (testPlan: TestPlan) =>
   apiGet(
     testPlan,
-    `/testplan/Plans/${testPlan.planId}/suites?api-version=7.1-preview.1`
+    `/testplan/plans/${testPlan.planId}/suites?api-version=7.1-preview.1`
   );
 
 export const getTestPointsForSuite =
   (testPlan: TestPlan) => async (suiteId: number) =>
     apiGet(
       testPlan,
-      `/testplan/Plans/${testPlan.planId}/Suites/${suiteId}/TestPoint?api-version=7.1-preview.2`
+      `/testplan/plans/${testPlan.planId}/suites/${suiteId}/TestPoint?api-version=7.1-preview.2`
     );
 
-export const createRun = (testPlan: TestPlan) => async () => {
+export const createRun = async (testPlan: TestPlan) => {
   const response = await testPlan.azureApiRequest.post(
     `/test/runs?api-version=7.1-preview.3`,
     {
@@ -37,6 +37,7 @@ export const createRun = (testPlan: TestPlan) => async () => {
       },
     }
   );
+
   testPlan.testRun = response.data;
   write(`Test run create: ${testPlan.testRun.name}:${testPlan.testRun.id}`);
 };
@@ -45,7 +46,7 @@ export const completeRun = async (
   testPlan: TestPlan,
   errorMessage?: string
 ) => {
-  if (testPlan.testRun?.id !== null) {
+  if (testPlan.testRun?.id) {
     const response = await testPlan.azureApiRequest.patch(
       `/test/runs/${testPlan.testRun.id}?api-version=7.1-preview.3`,
       {
@@ -66,16 +67,13 @@ export const submitTestResults =
       `/test/runs/${testPlan.testRun.id}/results?api-version=7.1-preview.6`,
       testResults
     );
-
     const passingCount = testResults.filter(
       (result) => result.outcome === Outcome.Passed
     ).length;
     write(`Passing tests: ${passingCount}`);
-
     const failingCount = testResults.filter(
       (result) => result.outcome === Outcome.Failed
     ).length;
     write(`Failing tests: ${failingCount}`);
-
     write("Results submitted");
   };

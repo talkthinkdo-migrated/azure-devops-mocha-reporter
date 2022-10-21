@@ -3,21 +3,21 @@
 --------------------------------------------------------------------------------------------- 
 */
 
-import { MochaReporterConfig } from "../interfaces/reporter.interfaces";
+// import { MochaReporterConfig } from "../interfaces/reporter.interfaces";
 
-interface Runner {
-  on: Function;
-  once: Function;
-}
+// interface Runner {
+//   on: Function;
+//   once: Function;
+// }
 
-type CreateRunner = (
-  runStr: string,
-  ifStr1: string,
-  ifStr2: string | null,
-  ifStr3: string | null,
-  arg1: any | null,
-  arg2: any | null
-) => Runner;
+// type CreateRunner = (
+//   runStr: string,
+//   ifStr1: string,
+//   ifStr2: string | null,
+//   ifStr3: string | null,
+//   arg1: any | null,
+//   arg2: any | null
+// ) => Runner;
 
 /**
  * Creates a mock runner object.
@@ -30,7 +30,7 @@ type CreateRunner = (
  * @param [arg2] - variable to be added to event handler's scope
  * @return mock runner instance
  */
-export const createMockRunner: CreateRunner = (
+export const createMockRunner = (
   runStr,
   ifStr1,
   ifStr2,
@@ -68,20 +68,13 @@ export const createMockRunner: CreateRunner = (
  * @param [arg2] - variable to be added to event handler's scope
  * @return event handler for the requested runner events
  */
-const createRunnerFunction = (
-  runStr: string,
-  ifStr1: string,
-  ifStr2: string | null,
-  ifStr3: string | null,
-  arg1: any | null,
-  arg2: any | null
-) => {
-  var test: string | null = null;
+const createRunnerFunction = (runStr, ifStr1, ifStr2, ifStr3, arg1, arg2) => {
+  var test = null;
   switch (runStr) {
     case "start":
     case "pending":
     case "end":
-      return function (event: string, callback: Function) {
+      return function (event, callback) {
         if (event === ifStr1) {
           callback();
         }
@@ -93,7 +86,7 @@ const createRunnerFunction = (
     case "suite end":
     case "test end":
       test = arg1;
-      return function (event: string, callback: Function) {
+      return function (event, callback) {
         if (event === ifStr1) {
           callback(test);
         }
@@ -101,14 +94,14 @@ const createRunnerFunction = (
     case "fail two args":
       test = arg1;
       var expectedError = arg2;
-      return function (event: string, callback: Function) {
+      return function (event, callback) {
         if (event === ifStr1) {
           callback(test, expectedError);
         }
       };
     case "start test":
       test = arg1;
-      return function (event: string, callback: Function) {
+      return function (event, callback) {
         if (event === ifStr1) {
           callback();
         }
@@ -118,7 +111,7 @@ const createRunnerFunction = (
       };
     case "suite suite end":
       var expectedSuite = arg1;
-      return function (event: string, callback: Function) {
+      return function (event, callback) {
         if (event === ifStr1) {
           callback(expectedSuite);
         }
@@ -131,7 +124,7 @@ const createRunnerFunction = (
       };
     case "pass end":
       test = arg1;
-      return function (event: string, callback: Function) {
+      return function (event, callback) {
         if (event === ifStr1) {
           callback(test);
         }
@@ -142,7 +135,7 @@ const createRunnerFunction = (
     case "test end fail":
       test = arg1;
       var error = arg2;
-      return function (event: string, callback: Function) {
+      return function (event, callback) {
         if (event === ifStr1) {
           callback();
         }
@@ -151,7 +144,7 @@ const createRunnerFunction = (
         }
       };
     case "fail end pass":
-      return function (event: string, callback: Function) {
+      return function (event, callback) {
         test = arg1;
         if (event === ifStr1) {
           callback(test, {});
@@ -176,7 +169,7 @@ const createRunnerFunction = (
  * @param {Function} ctor - Reporter class constructor
  * @return {createRunReporterFunction~runReporter}
  */
-export function createRunReporterFunction(ctor: Function) {
+export function createRunReporterFunction(ctor) {
   /**
    * Run reporter using stream reassignment to capture output.
    *
@@ -185,13 +178,9 @@ export function createRunReporterFunction(ctor: Function) {
    * @param [options] - Reporter configuration settings
    * @return Lines of output written to `stdout`
    */
-  var runReporter = function (
-    stubSelf: any,
-    runner: Runner,
-    options: MochaReporterConfig
-  ): string[] {
+  var runReporter = function (stubSelf, runner, options) {
     jest.spyOn(process.stdout, "write");
-    const stdout: string[] = [];
+    const stdout = [];
 
     Object.setPrototypeOf(stubSelf, ctor.prototype);
 

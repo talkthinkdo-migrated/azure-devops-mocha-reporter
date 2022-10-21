@@ -1,5 +1,3 @@
-import { TestPlan } from "./interfaces/testPlan.interfaces";
-
 /**
  * Search for all applicable test cases
  * @param title
@@ -25,13 +23,15 @@ export function write(str: string) {
  */
 export const pipe =
   (...functions: any) =>
-  (input: any) =>
+  (input?: any) =>
     functions.reduce(
       (previous: any, func: any) => previous.then(func),
       Promise.resolve(input)
     );
 
-export const pipeLog = (data: any) => console.log(data);
+export const pipeLog = (data: any) => {
+  console.log(data); // ?
+};
 
 /**
  * pipeable array.flat

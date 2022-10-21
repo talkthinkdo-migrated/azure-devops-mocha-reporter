@@ -3,7 +3,13 @@ import { Outcome } from "./enums/testPlan.enums";
 
 describe("addResult", () => {
   test("should add new results to testPlan", () => {
-    const testPlan = createTestPlan({});
+    const testPlan = createTestPlan({
+      organisation: "",
+      pat: "",
+      planId: "",
+      project: "",
+      runName: "",
+    });
     expect(testPlan.testResults.length).toBe(0);
 
     const output1 = addResult(123, Outcome.Passed, testPlan);

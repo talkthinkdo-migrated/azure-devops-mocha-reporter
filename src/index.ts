@@ -15,11 +15,18 @@ import {
   addResult,
   createTestPlan,
   filterTestPointsByTestResult,
-  getTestPoints,
+  getTestPointsFromSuiteIds,
   mapSuiteIds,
   mapTestPointToAzureTestResult,
 } from "./testPlan";
-import { flatten, getCaseIdsFromTitle, map, pipe, tap, write } from "./utils";
+import {
+  getCaseIdsFromTitle,
+  map,
+  pipe,
+  pipeLog,
+  tap as sideEffect,
+  write,
+} from "./utils";
 
 function cypressAzureReporter(runner: Runner, options: MochaReporterConfig) {
   const { EVENT_RUN_BEGIN, EVENT_RUN_END, EVENT_TEST_FAIL, EVENT_TEST_PASS } =
@@ -55,18 +62,19 @@ function cypressAzureReporter(runner: Runner, options: MochaReporterConfig) {
   });
   runner.on(EVENT_RUN_END, async () => {
     try {
+      await createRun(testPlan);
+
       await pipe(
         getTestSuites,
         mapSuiteIds,
-        getTestPoints(testPlan),
-        tap(createRun(testPlan)), // <- create run before continuing
-        flatten,
+        getTestPointsFromSuiteIds(testPlan),
         filterTestPointsByTestResult(testPlan),
         map(mapTestPointToAzureTestResult(testPlan)),
-        submitTestResults(testPlan),
-        completeRun(testPlan),
-        () => write("Cypress Azure reporter complete.")
+        submitTestResults(testPlan)
       )(testPlan);
+
+      await completeRun(testPlan);
+      write("Cypress Azure reporter complete.");
     } catch (error) {
       write("Cypress Azure reporter failed with:");
       write(error.message);
@@ -75,8 +83,6 @@ function cypressAzureReporter(runner: Runner, options: MochaReporterConfig) {
         testPlan,
         "Something went wrong with Cypress Azure reporter."
       );
-    } finally {
-      completeRun(testPlan);
     }
   });
 }

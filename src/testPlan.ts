@@ -8,6 +8,7 @@ import {
   TestResult,
   TestSuite,
 } from "./interfaces/testPlan.interfaces";
+import { flatten } from "./utils";
 
 export const createTestPlan = (options: ReporterOptions): TestPlan => {
   const testResults: Array<TestResult> = [];
@@ -42,7 +43,6 @@ export const addResult = (
   outcome: Outcome,
   testPlan: TestPlan
 ) => {
-  testPlan?.testResults;
   testPlan.testResults.push({
     testCaseId,
     outcome,
@@ -54,13 +54,13 @@ export const addResult = (
 export const mapSuiteIds = (suites: Array<TestSuite>) =>
   suites.map((suite) => suite.id);
 
-export const getTestPoints =
+export const getTestPointsFromSuiteIds =
   (testPlan: TestPlan) => async (suiteIds: number[]) => {
     const unresolvedPromises = suiteIds.map((id) =>
       getTestPointsForSuite(testPlan)(id)
     );
     const results = await Promise.all(unresolvedPromises);
-    return results;
+    return flatten(results);
   };
 
 export const filterTestPointsByTestResult =
@@ -77,10 +77,6 @@ export const mapTestPointToAzureTestResult =
     const result = testPlan.testResults.find(
       (result) => result.testCaseId === testPoint.testCaseReference.id
     );
-
-    if (result === undefined) {
-      throw Error("No test case matching testCaseReference.id");
-    }
 
     return {
       testPoint: {
