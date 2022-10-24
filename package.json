@@ -2,11 +2,10 @@
   "name": "cypress-devops-reporter",
   "version": "1.0.0",
   "description": "automatically create reports and run test plans from cypress",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "tsc": "tsc",
-    "test": "jest",
-    "test:mochaRun": "npm run tsc && mocha --reporter ./dist/index.js --reporterOptions 'pat=123,organisation=abc,project=123,planId=abc'"
+    "test": "jest"
   },
   "author": "Josh WHite",
   "license": "ISC",

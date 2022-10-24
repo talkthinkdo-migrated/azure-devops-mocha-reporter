@@ -8,11 +8,10 @@
     "outDir": "./dist",
     "moduleResolution": "node",
     "skipLibCheck": true,
-    "sourceMap": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "allowJs": true
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "src/**/*.test.js"]
+  "exclude": ["node_modules", "src/**/*.test.js", "**/testUtils/**"]
 }
