@@ -1,6 +1,12 @@
+import { messages } from "./constants/messages";
 import { Outcome, TestRunState } from "./enums/testPlan.enums";
-import { TestPlan, TestResult } from "./interfaces/testPlan.interfaces";
-import { write } from "./utils";
+import {
+  TestPlan,
+  TestPoint,
+  TestResult,
+  TestSuite,
+} from "./interfaces/testPlan.interfaces";
+import { flatten, write } from "./utils";
 
 export const apiGet = async (testPlan: TestPlan, url: string) => {
   const response = await testPlan.azureApiRequest.get(url);
@@ -11,7 +17,7 @@ export const apiGet = async (testPlan: TestPlan, url: string) => {
  * get all azure test suites from given plan
  * @param testPlan
  */
-export const getTestSuites = async (testPlan: TestPlan) =>
+export const getTestSuites = (testPlan: TestPlan) => async () =>
   apiGet(
     testPlan,
     `/testplan/plans/${testPlan.planId}/suites?api-version=7.1-preview.1`
@@ -39,7 +45,7 @@ export const createRun = async (testPlan: TestPlan) => {
   );
 
   testPlan.testRun = response.data;
-  write(`Test run create: ${testPlan.testRun.name}:${testPlan.testRun.id}`);
+  write(`Test run created: ${testPlan.testRun.name}:${testPlan.testRun.id}`);
 };
 
 export const completeRun = async (
@@ -60,9 +66,6 @@ export const completeRun = async (
 
 export const submitTestResults =
   (testPlan: TestPlan) => async (testResults: Array<TestResult>) => {
-    if (testPlan.testRun === null) {
-      throw new Error("TestRun has not been prepared yet for this TestPlan.");
-    }
     await testPlan.azureApiRequest.post(
       `/test/runs/${testPlan.testRun.id}/results?api-version=7.1-preview.6`,
       testResults
@@ -75,5 +78,49 @@ export const submitTestResults =
       (result) => result.outcome === Outcome.Failed
     ).length;
     write(`Failing tests: ${failingCount}`);
-    write("Results submitted");
+    write(messages.resultsSubmitted);
+  };
+
+export const mapSuiteIds = (suites: Array<TestSuite>) =>
+  suites.map((suite) => suite.id);
+
+export const getTestPointsFromSuiteIds =
+  (testPlan: TestPlan) => async (suiteIds: number[]) => {
+    const unresolvedPromises = suiteIds.map((id) =>
+      getTestPointsForSuite(testPlan)(id)
+    );
+    const results = await Promise.all(unresolvedPromises);
+    return flatten(results);
+  };
+
+export const filterTestPointsByTestResult =
+  (testPlan: TestPlan) => (testPoints: Array<TestPoint>) => {
+    return testPoints.filter((testPoint) =>
+      testPlan.testResults
+        .map((testResult) => testResult.testCaseId)
+        .includes(testPoint.testCaseReference.id)
+    );
+  };
+
+export const mapTestPointToAzureTestResult =
+  (testPlan: TestPlan) => (testPoint: TestPoint) => {
+    const result = testPlan.testResults.find(
+      (result) => result.testCaseId === testPoint.testCaseReference.id
+    );
+
+    return {
+      testPoint: {
+        id: testPoint.id,
+      },
+      testCase: {
+        id: result.testCaseId,
+      },
+      testCaseTitle: testPoint.testCaseReference.name,
+      testRun: {
+        id: testPlan.testRun.id,
+      },
+      testCaseRevision: 1,
+      outcome: result.outcome,
+      state: TestRunState.Completed,
+    };
   };

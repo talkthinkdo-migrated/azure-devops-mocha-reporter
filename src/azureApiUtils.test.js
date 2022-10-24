@@ -1,6 +1,6 @@
+import axios from "axios";
 import { apiGet } from "./azureApiUtils";
 import { createTestPlan } from "./testPlan";
-import axios from "axios";
 jest.mock("axios");
 
 const mockAxios = axios;

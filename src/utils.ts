@@ -29,10 +29,6 @@ export const pipe =
       Promise.resolve(input)
     );
 
-export const pipeLog = (data: any) => {
-  console.log(data); // ?
-};
-
 /**
  * pipeable array.flat
  */
@@ -43,14 +39,3 @@ type MapFunc = (item: any, index?: number) => any;
  * pipeable array.map
  */
 export const map = (func: MapFunc) => (array: any[]) => array.map(func);
-
-/**
- * Performs given func, then returns given data
- * useful to "pass through" in a pipe
- * @param func - side effect function
- * @returns given data
- */
-export const tap = (func: Function) => async (data: any) => {
-  await func(data);
-  return data;
-};

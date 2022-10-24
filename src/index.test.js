@@ -1,22 +1,21 @@
-import cypressAzureReporter from "./index";
-import { Runner, Suite } from "mocha";
-import theoretically from "jest-theories";
-import { createMockRunner, createRunReporterFunction } from "./testUtils";
-import * as testPlan from "./testPlan";
-import { Outcome } from "./enums/testPlan.enums";
 import axios from "axios";
 import MockAdapter from "axios-mock-adapter";
-import { TestResult } from "./interfaces/testPlan.interfaces";
+import theoretically from "jest-theories";
+import { Runner, Suite } from "mocha";
+import { Outcome } from "./enums/testPlan.enums";
+import cypressAzureReporter from "./index";
+import * as testPlan from "./testPlan";
+import { createMockRunner, createRunReporterFunction } from "./testUtils";
 
 let mock;
 
 beforeAll(() => {
-  mock = new MockAdapter(axios);
+  mock?.reset();
 });
 
-afterEach(() => {
-  mock.reset();
+beforeEach(() => {
   jest.clearAllMocks();
+  mock = new MockAdapter(axios);
 });
 
 const { EVENT_TEST_FAIL, EVENT_TEST_PASS, EVENT_RUN_END } = Runner.constants;
@@ -167,108 +166,3 @@ describe("failed", () => {
     });
   });
 });
-
-describe("run end", () => {
-  test("should call the correct api endpoints in correct order", async () => {
-    const planId = "PLAN_ID";
-    const testSuiteId = 1000;
-    const testCaseId = 2000;
-    const testRunId = 3000;
-
-    await runReporterTestRigWithAxiosMocks({
-      planId
-      testSuiteId
-      testCaseId
-      testRunId
-    });
-
-    // Create test run
-    expect(mock.history.post[0].url).toContain(`/test/runs?`);
-
-    // Get suites from plan Id
-    expect(mock.history.get[0].url).toContain(
-      `/testplan/plans/${planId}/suites?`
-    );
-
-    // Get test points for suites
-    expect(mock.history.get[1].url).toContain(
-      `/testplan/plans/${planId}/suites/${testSuiteId}/TestPoint?`
-    );
-
-    // Post test results to run
-    expect(mock.history.post[1].url).toContain(
-      `/test/runs/${testRunId}/results?`
-    );
-
-    // Complete test run
-    expect(mock.history.patch[0].url).toContain(`/test/runs/${testRunId}?`);
-    const runState = JSON.parse(mock.history.patch[0].data).state;
-    expect(runState).toBe("Completed")
-  });
-});
-
-const runReporterTestRigWithAxiosMocks = async ({
-  planId
-  testSuiteId
-  testCaseId
-  testRunId
-}) => {
-  const options = {
-    reporterOptions: {
-      pat: "",
-      organisation: "",
-      planId: planId,
-      project: "",
-      runName: "",
-    },
-  };
-
-  var test = {
-    slow: () => {},
-    title: `C${testCaseId} a test`,
-  };
-
-  // mock PATCH test run
-  const patchRun = new RegExp(`.*\/test/runs/${testRunId}?.*`, "i");
-  mock.onPatch(patchRun).reply(200, {});
-
-  // mock POST submit results
-  const submitResults = new RegExp(
-    `.*\/test/runs/${testRunId}/results?.*`,
-    "i"
-  );
-  mock.onPost(submitResults).reply(200, {});
-
-  // mock POST test run
-  const createRun = new RegExp(`.*\/test/runs?.*`, "i");
-  mock.onPost(createRun).reply(200, { id: testRunId });
-
-  // mock GET test points
-  const getTestPoints = new RegExp(
-    `.*\/testplan\/plans\/${planId}\/suites\/${testSuiteId}/TestPoint.*`,
-    "i"
-  );
-  mock
-    .onGet(getTestPoints)
-    .reply(200, { value: [{ testCaseReference: { id: testCaseId } }] });
-
-  // mock GET test suites
-  const getSuites = new RegExp(
-    `.*\/testplan\/plans\/${planId}\/suites?.*`,
-    "i"
-  );
-  mock.onGet(getSuites).reply(200, { value: [{ id: testSuiteId }] });
-
-  const runner = createMockRunner(
-    "pass end",
-    EVENT_TEST_PASS,
-    EVENT_RUN_END,
-    null,
-    test,
-    null
-  );
-
-  runReporter({}, runner, options);
-
-  await new Promise(process.nextTick);
-};

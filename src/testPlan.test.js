@@ -1,5 +1,5 @@
-import { createTestPlan, addResult } from "./testPlan";
 import { Outcome } from "./enums/testPlan.enums";
+import { addResult, createTestPlan } from "./testPlan";
 
 describe("addResult", () => {
   test("should add new results to testPlan", () => {

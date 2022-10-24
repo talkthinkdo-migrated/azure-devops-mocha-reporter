@@ -1,5 +1,5 @@
-import { getCaseIdsFromTitle } from "./utils";
 import theoretically from "jest-theories";
+import { getCaseIdsFromTitle } from "./utils";
 
 describe("getCaseIdsFromTitle", () => {
   const theories = [

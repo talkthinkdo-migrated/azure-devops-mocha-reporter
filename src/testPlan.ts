@@ -1,14 +1,7 @@
 import axios from "axios";
-import { getTestPointsForSuite } from "./azureApiUtils";
-import { Outcome, TestRunState } from "./enums/testPlan.enums";
+import { Outcome } from "./enums/testPlan.enums";
 import { ReporterOptions } from "./interfaces/reporter.interfaces";
-import {
-  TestPlan,
-  TestPoint,
-  TestResult,
-  TestSuite,
-} from "./interfaces/testPlan.interfaces";
-import { flatten } from "./utils";
+import { TestPlan, TestResult } from "./interfaces/testPlan.interfaces";
 
 export const createTestPlan = (options: ReporterOptions): TestPlan => {
   const testResults: Array<TestResult> = [];
@@ -50,47 +43,3 @@ export const addResult = (
 
   return testPlan;
 };
-
-export const mapSuiteIds = (suites: Array<TestSuite>) =>
-  suites.map((suite) => suite.id);
-
-export const getTestPointsFromSuiteIds =
-  (testPlan: TestPlan) => async (suiteIds: number[]) => {
-    const unresolvedPromises = suiteIds.map((id) =>
-      getTestPointsForSuite(testPlan)(id)
-    );
-    const results = await Promise.all(unresolvedPromises);
-    return flatten(results);
-  };
-
-export const filterTestPointsByTestResult =
-  (testPlan: TestPlan) => (testPoints: Array<TestPoint>) => {
-    return testPoints.filter((testPoint) =>
-      testPlan.testResults
-        .map((testResult) => testResult.testCaseId)
-        .includes(testPoint.testCaseReference.id)
-    );
-  };
-
-export const mapTestPointToAzureTestResult =
-  (testPlan: TestPlan) => (testPoint: TestPoint) => {
-    const result = testPlan.testResults.find(
-      (result) => result.testCaseId === testPoint.testCaseReference.id
-    );
-
-    return {
-      testPoint: {
-        id: testPoint.id,
-      },
-      testCase: {
-        id: result.testCaseId,
-      },
-      testCaseTitle: testPoint.testCaseReference.name,
-      testRun: {
-        id: testPlan.testRun.id,
-      },
-      testCaseRevision: 1,
-      outcome: result.outcome,
-      state: TestRunState.Completed,
-    };
-  };
