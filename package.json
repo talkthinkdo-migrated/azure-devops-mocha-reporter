@@ -3,6 +3,17 @@
   "version": "1.0.0",
   "description": "Run Azure Devops test cases from mocha tests",
   "main": "dist/index.js",
+  "keywords": [
+    "mocha",
+    "cypress",
+    "ado",
+    "azure devops",
+    "mocha-reporter",
+    "test-plan"
+  ],
+  "maintainers": [
+    "Josh White"
+  ],
   "scripts": {
     "tsc": "tsc",
     "test": "jest"
