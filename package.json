@@ -1,6 +1,6 @@
 {
   "name": "azure-devops-mocha-reporter",
-  "version": "1.0.0",
+  "version": "0.0.2",
   "description": "Run Azure Devops test cases from mocha tests",
   "main": "dist/index.js",
   "keywords": [
@@ -18,8 +18,8 @@
     "tsc": "tsc",
     "test": "jest"
   },
-  "author": "Josh WHite",
-  "license": "ISC",
+  "author": "Josh White <josh.white@talkthinkdo.com>",
+  "license": "MIT",
   "devDependencies": {
     "@types/jest": "^29.2.0",
     "@types/mocha": "^10.0.0",
