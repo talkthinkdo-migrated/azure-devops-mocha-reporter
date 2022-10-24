@@ -80,3 +80,17 @@ npm i azure-devops-mocha-reporter
 - `TC123`
 - `C123,C456`
 - `C123 C456`
+
+## Try it out
+
+An example is provided in the ... `./example` directory, allowing you to test this locally against your ADO Test Plan:
+- `cd example`
+- `npm i`
+- clone `.env-sample` and rename to `.env`
+- Replace `.env` values to match your own*
+- Update `test/foo.spec.js` with a matching Test Case ID from your plan
+- `npm run mochaRun`
+
+
+
+*You'll need a PAT token with enough permissions. See [Azure DevOps' docs](https://learn.microsoft.com/en-us/azure/devops/organizations/accounts/use-personal-access-tokens-to-authenticate?view=azure-devops&tabs=Windows) to create one
