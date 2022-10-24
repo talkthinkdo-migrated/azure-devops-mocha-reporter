@@ -39,7 +39,7 @@ describe("validate", () => {
 
     expect(() => {
       cypressAzureReporter.call({}, runner, {});
-    }).toThrow("Missing reporterOptions in cypress.json");
+    }).toThrow("Missing reporterOptions");
   });
 
   const theories = ["pat", "organisation", "planId", "project"];
@@ -56,9 +56,7 @@ describe("validate", () => {
 
       expect(() => {
         cypressAzureReporter.call({}, runner, options);
-      }).toThrow(
-        `Missing '${theory}' value. Please update reporterOptions in cypress.json`
-      );
+      }).toThrow(`Missing '${theory}' value. Please update reporterOptions`);
     }
   );
 });

@@ -1,7 +1,7 @@
 {
-  "name": "cypress-devops-reporter",
+  "name": "azure-devops-mocha-reporter",
   "version": "1.0.0",
-  "description": "automatically create reports and run test plans from cypress",
+  "description": "Run Azure Devops test cases from mocha tests",
   "main": "dist/index.js",
   "scripts": {
     "tsc": "tsc",

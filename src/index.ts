@@ -47,13 +47,11 @@ function cypressAzureReporter(runner: Runner, options: MochaReporterConfig) {
 
 function validate(options: ReporterOptions, name: ReporterOptionKeys) {
   if (options == null) {
-    throw new Error("Missing reporterOptions in cypress.json");
+    throw new Error("Missing reporterOptions");
   }
   if (options[name] == null) {
     throw new Error(
-      "Missing '" +
-        name +
-        "' value. Please update reporterOptions in cypress.json"
+      "Missing '" + name + "' value. Please update reporterOptions"
     );
   }
 }

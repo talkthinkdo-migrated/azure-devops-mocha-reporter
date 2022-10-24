@@ -1,10 +1,10 @@
 export const messages = {
-  reporterStarted: "Cypress Azure reporter started...",
+  reporterStarted: "Azure Devops Mocha reporter started...",
   resultsSubmitted: "Results submitted",
-  reporterComplete: "Cypress Azure reporter complete.",
-  reportedFailedWith: "Cypress Azure reporter failed with:",
+  reporterComplete: "Azure Devops Mocha reporter complete.",
+  reportedFailedWith: "Azure Devops Mocha reporter failed with:",
   somethingWentWrongWithReported:
-    "Something went wrong with Cypress Azure reporter.",
+    "Something went wrong with Azure Devops Mocha reporter.",
   testsDoNotContainTestIds:
     "Your tests don't contain any ids which match an Azure test case",
 } as const;
