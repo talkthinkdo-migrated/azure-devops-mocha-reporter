@@ -1,8 +1,15 @@
 {
   "name": "azure-devops-mocha-reporter",
-  "version": "0.0.2",
+  "version": "1.0.0",
   "description": "Run Azure Devops test cases from mocha tests",
   "main": "dist/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/talkthinkdo/azure-devops-mocha-reporter"
+  },
+  "bugs": {
+    "url": "https://github.com/talkthinkdo/azure-devops-mocha-reporter/issues"
+  },
   "keywords": [
     "mocha",
     "cypress",
@@ -11,8 +18,8 @@
     "mocha-reporter",
     "test-plan"
   ],
-  "maintainers": [
-    "Josh White"
+  "contributors": [
+    "Josh White <josh.white@talkthinkdo.com>"
   ],
   "scripts": {
     "tsc": "tsc",
