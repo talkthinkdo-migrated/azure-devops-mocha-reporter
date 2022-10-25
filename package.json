@@ -1,6 +1,6 @@
 {
   "name": "azure-devops-mocha-reporter",
-  "version": "1.0.0",
+  "version": "1.0.0-beta",
   "description": "Run Azure Devops test cases from mocha tests",
   "main": "dist/index.js",
   "repository": {
