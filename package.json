@@ -23,7 +23,8 @@
   ],
   "scripts": {
     "tsc": "tsc",
-    "test": "jest"
+    "test": "jest",
+    "prepublishOnly": "npm run tsc && npm test"
   },
   "author": "Josh White <josh.white@talkthinkdo.com>",
   "license": "MIT",
