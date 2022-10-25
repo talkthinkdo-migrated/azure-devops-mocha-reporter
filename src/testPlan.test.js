@@ -8,7 +8,7 @@ describe("addResult", () => {
       pat: "",
       planId: "",
       project: "",
-      runName: "",
+      runName: "should add new results to testPlan",
     });
     expect(testPlan.testResults.length).toBe(0);
 

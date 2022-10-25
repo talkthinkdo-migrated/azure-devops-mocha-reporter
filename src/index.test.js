@@ -28,7 +28,7 @@ const createBaseOptions = () => ({
     organisation: "",
     planId: "",
     project: "",
-    runName: "",
+    runName: "base options",
   },
 });
 

@@ -22,7 +22,7 @@ describe("azureApiUtils", () => {
         pat: "",
         planId: "",
         project: "",
-        runName: "",
+        runName: "should call axios with provided string",
       });
 
       apiGet(baseTestPlan, myString);
@@ -41,7 +41,7 @@ describe("azureApiUtils", () => {
         pat: "",
         planId: "",
         project: "",
-        runName: "",
+        runName: "should return `data.value` property from response",
       });
 
       const response = await apiGet(baseTestPlan, myString);

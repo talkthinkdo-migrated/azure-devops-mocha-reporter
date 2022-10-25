@@ -76,7 +76,7 @@ describe("onTestRunEnd", () => {
       organisation: "",
       planId,
       project: "",
-      runName: "",
+      runName: "Run with no matching test cases",
       pat: "",
     });
 
@@ -149,6 +149,10 @@ describe("onTestRunEnd", () => {
           errorMessage,
         });
 
+        // prevents Jest logging errors when tests pass
+        const mockStdOut = jest.spyOn(process.stdout, "write");
+        mockStdOut.mockImplementation(() => {});
+
         try {
           await onTestRunEnd(testPlanInstance)();
         } catch {
@@ -157,6 +161,8 @@ describe("onTestRunEnd", () => {
           );
           expect(mockWrite).toHaveBeenCalledWith("Response: " + errorMessage);
         }
+
+        mockStdOut.mockRestore();
 
         expect.assertions(2);
       }
@@ -206,7 +212,7 @@ function mockSubmitResults({ testRunId, shouldFail = false, errorMessage }) {
 function mockCreateRun({ testRunId, shouldFail = false, errorMessage = "" }) {
   const regex = new RegExp(`.*\/test/runs?.*`, "i");
   if (shouldFail === false) {
-    mock.onPost(regex).reply(200, { id: testRunId });
+    mock.onPost(regex).reply(200, { id: testRunId, name: "test run name" });
   } else {
     mock.onPost(regex).reply(500, { errorCode: 0, message: errorMessage });
   }
