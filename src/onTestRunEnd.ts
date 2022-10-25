@@ -20,7 +20,6 @@ export const onTestRunEnd = (testPlan: TestPlan) => async () => {
       getTestPointsFromSuiteIds(testPlan),
       filterTestPointsByTestResult(testPlan)
     )();
-
     if (matchingTestPoints.length > 0) {
       await createRun(testPlan);
 
@@ -41,6 +40,10 @@ export const onTestRunEnd = (testPlan: TestPlan) => async () => {
       write("Request URL: " + error.config?.url);
       write("Request Body: " + JSON.stringify(error.config.data));
       write("Response: " + error.response.data?.message);
+    }
+
+    if (testPlan.testRun !== null) {
+      completeRun(testPlan, messages.reportedFailedWith + " " + error.stack);
     }
     write(error.stack);
     throw new Error(error.message);

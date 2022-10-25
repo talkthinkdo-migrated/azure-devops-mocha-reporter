@@ -122,5 +122,8 @@ export const mapTestPointToAzureTestResult =
       testCaseRevision: 1,
       outcome: result.outcome,
       state: TestRunState.Completed,
+      testPlan: {
+        id: testPlan.planId,
+      },
     };
   };

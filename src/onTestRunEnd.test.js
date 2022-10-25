@@ -1,6 +1,7 @@
 import axios from "axios";
 import MockAdapter from "axios-mock-adapter";
 import theoretically from "jest-theories";
+import * as azureUtils from "./azureApiUtils";
 import { messages } from "./constants/messages";
 import { onTestRunEnd } from "./onTestRunEnd";
 import * as testPlan from "./testPlan";
@@ -110,7 +111,6 @@ describe("onTestRunEnd", () => {
         requestName: "postSubmitResults",
         mockWithFailureFn: mockSubmitResults,
       },
-      { requestName: "patchRun", mockWithFailureFn: mockPatchRun },
     ];
 
     theoretically(
@@ -167,6 +167,89 @@ describe("onTestRunEnd", () => {
         expect.assertions(2);
       }
     );
+  });
+
+  test("if error is caught after Test Run is created, should complete Test Run", async () => {
+    const planId = "PLAN_ID";
+    const testSuiteId = 1000;
+    const testCaseId = 2000;
+    const testRunId = 3000;
+
+    const mockCompleteRun = jest.spyOn(azureUtils, "completeRun");
+
+    const testPlanInstance = testPlan.createTestPlan({
+      organisation: "",
+      planId,
+      project: "",
+      runName: "my test run",
+      pat: "",
+    });
+
+    testPlanInstance.testResults.push({
+      testCaseId,
+    });
+
+    setUpPassingMocks(planId, testCaseId, testRunId, testSuiteId);
+
+    // override single api mock
+    const errorMessage = "some error";
+    const requestRegex = mockSubmitResults({
+      testRunId,
+      shouldFail: true,
+      errorMessage,
+    });
+
+    try {
+      await onTestRunEnd(testPlanInstance)();
+    } catch (error) {
+      expect(mockCompleteRun).toHaveBeenLastCalledWith(
+        expect.any(Object),
+        expect.stringContaining(messages.reportedFailedWith)
+      );
+    }
+
+    expect.assertions(1);
+  });
+
+  test("if error is caught after Test Run is created, should skip complete Test Run", async () => {
+    const planId = "PLAN_ID";
+    const testSuiteId = 1000;
+    const testCaseId = 2000;
+    const testRunId = 3000;
+
+    const mockCompleteRun = jest.spyOn(azureUtils, "completeRun");
+
+    const testPlanInstance = testPlan.createTestPlan({
+      organisation: "",
+      planId,
+      project: "",
+      runName: "my test run",
+      pat: "",
+    });
+
+    testPlanInstance.testResults.push({
+      testCaseId,
+    });
+
+    setUpPassingMocks(planId, testCaseId, testRunId, testSuiteId);
+
+    // override single api mock
+    const errorMessage = "some error";
+    const requestRegex = mockGetTestPoints({
+      planId,
+      testSuiteId,
+      testCaseId,
+      shouldFail: true,
+      errorMessage,
+    });
+
+    try {
+      await onTestRunEnd(testPlanInstance)();
+    } catch (error) {
+      expect(mockCompleteRun).not.toHaveBeenCalled();
+    }
+
+    expect.assertions(1);
   });
 });
 
