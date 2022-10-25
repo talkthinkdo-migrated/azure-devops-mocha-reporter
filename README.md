@@ -1,5 +1,7 @@
 # azure-devops-mocha-reporter
 
+[![Node.js CI](https://github.com/talkthinkdo/azure-devops-mocha-reporter/actions/workflows/node.js.yml/badge.svg)](https://github.com/talkthinkdo/azure-devops-mocha-reporter/actions/workflows/node.js.yml)
+
 Performs ADO (Azure DevOps) Test Run with output from Mocha integration tests, using Test Case IDs from your tests.
 
 Generates reports & executes Test Points.
