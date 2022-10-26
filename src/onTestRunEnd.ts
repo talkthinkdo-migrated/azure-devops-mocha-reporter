@@ -43,7 +43,13 @@ export const onTestRunEnd = (testPlan: TestPlan) => async () => {
     }
 
     if (testPlan.testRun !== null) {
-      completeRun(testPlan, messages.reportedFailedWith + " " + error.stack);
+      completeRun(
+        testPlan,
+        messages.reportedFailedWith +
+          error.response?.data?.message +
+          " | .... | Stack:" +
+          error.stack
+      );
     }
     write(error.stack);
     throw new Error(error.message);
