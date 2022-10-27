@@ -33,13 +33,22 @@ function cypressAzureReporter(runner: Runner, options: MochaReporterConfig) {
   runner.on(EVENT_TEST_PASS, (test) => {
     const testCaseIds = getCaseIdsFromTitle(test.title);
     testCaseIds.forEach((testCaseId) => {
-      addResult(testCaseId, Outcome.Passed, testPlan);
+      addResult({
+        testCaseId,
+        outcome: Outcome.Passed,
+        testPlan,
+      });
     });
   });
   runner.on(EVENT_TEST_FAIL, (test) => {
     const testCaseIds = getCaseIdsFromTitle(test.title);
     testCaseIds.forEach((testCaseId) => {
-      addResult(testCaseId, Outcome.Failed, testPlan);
+      addResult({
+        testCaseId,
+        outcome: Outcome.Failed,
+        testPlan,
+        stack: test.err.stack,
+      });
     });
   });
   runner.on(EVENT_RUN_END, onTestRunEnd(testPlan));

@@ -125,5 +125,6 @@ export const mapTestPointToAzureTestResult =
       testPlan: {
         id: testPlan.planId,
       },
+      stackTrace: result.stack,
     };
   };

@@ -6,6 +6,7 @@ import { Outcome } from "./enums/testPlan.enums";
 import cypressAzureReporter from "./index";
 import * as testPlan from "./testPlan";
 import { createMockRunner, createRunReporterFunction } from "./testUtils";
+import { reporters } from "mocha";
 
 let mock;
 
@@ -78,6 +79,9 @@ describe("passed", () => {
       const options = createBaseOptions();
 
       var test = {
+        err: {
+          stack: "",
+        },
         slow: () => {},
         title,
       };
@@ -125,11 +129,18 @@ describe("failed", () => {
       { title: "Two test ids C123, C321", expectedResultIds: [123, 321] },
     ];
     theoretically("'{title}'", theories, ({ title, expectedResultIds }) => {
+      // prevents reporter overwriting mocked test
+      jest.spyOn(reporters, "Base").mockImplementation((reporter) => reporter);
+
       const mockAddResult = jest.spyOn(testPlan, "addResult");
-
       const options = createBaseOptions();
+      const mockStackMessage = "some stack message";
 
+      // mocked test
       var test = {
+        err: {
+          stack: mockStackMessage,
+        },
         slow: () => {},
         title,
       };
@@ -159,6 +170,11 @@ describe("failed", () => {
         const finalResultTestIds = finalResults.map(
           ({ testCaseId }) => testCaseId
         );
+
+        expect(
+          finalResults.every(({ stack }) => stack === mockStackMessage)
+        ).toBe(true);
+
         expect(finalResultTestIds).toStrictEqual(expectedResultIds);
       }
     });

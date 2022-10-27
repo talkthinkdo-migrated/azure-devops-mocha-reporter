@@ -31,14 +31,23 @@ export const createTestPlan = (options: ReporterOptions): TestPlan => {
   };
 };
 
-export const addResult = (
-  testCaseId: number,
-  outcome: Outcome,
-  testPlan: TestPlan
-) => {
+interface AddResultOptions {
+  testCaseId: number;
+  outcome: Outcome;
+  testPlan: TestPlan;
+  stack?: string;
+}
+
+export const addResult = ({
+  testPlan,
+  testCaseId,
+  outcome,
+  stack,
+}: AddResultOptions) => {
   testPlan.testResults.push({
     testCaseId,
     outcome,
+    stack,
   });
 
   return testPlan;
