@@ -12,7 +12,11 @@ describe("addResult", () => {
     });
     expect(testPlan.testResults.length).toBe(0);
 
-    const output1 = addResult(123, Outcome.Passed, testPlan);
+    const output1 = addResult({
+      testCaseId: 123,
+      outcome: Outcome.Passed,
+      testPlan,
+    });
 
     expect(testPlan.testResults.length).toBe(1);
     expect(testPlan.testResults[0].testCaseId).toBe(123);
@@ -20,7 +24,11 @@ describe("addResult", () => {
 
     expect(output1).toBe(testPlan);
 
-    const output2 = addResult(456, Outcome.Failed, testPlan);
+    const output2 = addResult({
+      testCaseId: 456,
+      outcome: Outcome.Failed,
+      testPlan,
+    });
 
     expect(testPlan.testResults.length).toBe(2);
     expect(testPlan.testResults[1].testCaseId).toBe(456);

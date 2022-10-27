@@ -3,6 +3,7 @@ import { AxiosInstance } from "axios";
 
 export interface TestResult {
   testCaseId: number;
+  stack: string;
   outcome: Outcome;
 }
 
