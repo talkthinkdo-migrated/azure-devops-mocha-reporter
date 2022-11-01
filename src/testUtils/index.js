@@ -3,22 +3,6 @@
 --------------------------------------------------------------------------------------------- 
 */
 
-// import { MochaReporterConfig } from "../interfaces/reporter.interfaces";
-
-// interface Runner {
-//   on: Function;
-//   once: Function;
-// }
-
-// type CreateRunner = (
-//   runStr: string,
-//   ifStr1: string,
-//   ifStr2: string | null,
-//   ifStr3: string | null,
-//   arg1: any | null,
-//   arg2: any | null
-// ) => Runner;
-
 /**
  * Creates a mock runner object.
  *
@@ -35,14 +19,17 @@ export const createMockRunner = (
   ifStr1,
   ifStr2,
   ifStr3,
+  ifStr4,
   arg1,
   arg2
 ) => {
+  ifStr4; // ?
   var runnerFunction = createRunnerFunction(
     runStr,
     ifStr1,
     ifStr2,
     ifStr3,
+    ifStr4,
     arg1,
     arg2
   );
@@ -68,7 +55,15 @@ export const createMockRunner = (
  * @param [arg2] - variable to be added to event handler's scope
  * @return event handler for the requested runner events
  */
-const createRunnerFunction = (runStr, ifStr1, ifStr2, ifStr3, arg1, arg2) => {
+const createRunnerFunction = (
+  runStr,
+  ifStr1,
+  ifStr2,
+  ifStr3,
+  ifStr4,
+  arg1,
+  arg2
+) => {
   var test = null;
   switch (runStr) {
     case "start":
@@ -154,6 +149,23 @@ const createRunnerFunction = (runStr, ifStr1, ifStr2, ifStr3, arg1, arg2) => {
         }
         if (event === ifStr3) {
           callback(test);
+        }
+      };
+    case "test:before:run pass fail end":
+      return function (event, callback) {
+        const test1 = arg1;
+        const test2 = arg2;
+        if (event === ifStr1) {
+          callback();
+        }
+        if (event === ifStr2) {
+          callback();
+        }
+        if (event === ifStr3) {
+          callback(test1);
+        }
+        if (event === ifStr4) {
+          callback();
         }
       };
     default:

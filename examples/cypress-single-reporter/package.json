@@ -1,0 +1,16 @@
+{
+  "name": "cypress-single-reporter",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "cypress run --headless --config defaultCommandTimeout=10000"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "azure-devops-mocha-reporter": "file:../../",
+    "cypress": "^10.11.0",
+    "dotenv": "^16.0.3"
+  }
+}
