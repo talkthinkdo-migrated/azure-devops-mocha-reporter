@@ -28,7 +28,7 @@ npm i azure-devops-mocha-reporter cypress-multi-reporters cypress
 ```JS
 module.exports = {
   reporterEnabled:
-    "mocha-junit-reporter, azure-devops-mocha-reporter",
+    "mocha-junit-reporter",
   mochaJunitReporterReporterOptions: {
     mochaFile: "results/cypress-and-azure-devops-[hash].xml",
     toConsole: true,
@@ -41,8 +41,45 @@ module.exports = {
     runName: "A CUSTOM RUN NAME",
   },
 };
-
 ```
+
+cypress.config.js
+```JS
+const { defineConfig } = require('cypress');
+module.exports = defineConfig({
+  e2e: {
+    setupNodeEvents(on, config) {
+      require("azure-devops-mocha-reporter/dist/cypress/plugin").default(on);
+    },
+    ... // other props
+  },
+});
+```
+
+or if you have custom code in setupNodeEvents:
+```JS
+
+const { defineConfig } = require('cypress');
+const { beforeRunHook, afterRunHook } = require('azure-devops-mocha-reporter/dist/cypress');
+
+module.exports = defineConfig({
+  e2e: {
+    setupNodeEvents(on, config) {
+      on('before:run', async (details) => {
+        console.log('override before:run');
+        await beforeRunHook(details);
+      });
+
+      on('after:run', async (results) => {
+        console.log('override after:run');
+        await afterRunHook(results);
+      });
+    },
+    ... //other props
+  },
+});
+```
+
 `your-test.spec.js`
 ```JS
 it('C123, C321 url should include /users/1.edit', () => {
