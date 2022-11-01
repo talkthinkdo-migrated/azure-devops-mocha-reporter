@@ -5,7 +5,9 @@ import { Runner, Suite } from "mocha";
 import { Outcome } from "./enums/testPlan.enums";
 import cypressAzureReporter from "./index";
 import * as testPlan from "./testPlan";
-import * as onTestRunEnd from "./onTestRunEnd";
+import * as onTestRunEndObj from "./onTestRunEnd";
+import * as onTestPassObj from "./onTestPass";
+import * as onTestFailObj from "./onTestFail";
 import { createMockRunner, createRunReporterFunction } from "./testUtils";
 import { reporters } from "mocha";
 
@@ -20,7 +22,8 @@ beforeEach(() => {
   mock = new MockAdapter(axios);
 });
 
-const { EVENT_TEST_FAIL, EVENT_TEST_PASS, EVENT_RUN_END } = Runner.constants;
+const { EVENT_TEST_FAIL, EVENT_TEST_PASS, EVENT_RUN_END, EVENT_RUN_BEGIN } =
+  Runner.constants;
 
 const runReporter = createRunReporterFunction(cypressAzureReporter);
 
@@ -92,6 +95,7 @@ describe("passed", () => {
         EVENT_TEST_PASS,
         null,
         null,
+        null,
         test,
         null
       );
@@ -151,6 +155,7 @@ describe("failed", () => {
         EVENT_TEST_FAIL,
         null,
         null,
+        null,
         test,
         null
       );
@@ -184,10 +189,9 @@ describe("failed", () => {
 
 describe("EVENT_RUN_END", () => {
   test("should call onTestRunEnd", () => {
-    const innerMock = jest.fn();
     const mockOnTestRunEnd = jest
-      .spyOn(onTestRunEnd, "onTestRunEnd")
-      .mockImplementation(() => innerMock);
+      .spyOn(onTestRunEndObj, "onTestRunEnd")
+      .mockImplementation(() => {});
 
     const options = createBaseOptions();
 
@@ -204,6 +208,7 @@ describe("EVENT_RUN_END", () => {
       EVENT_TEST_PASS,
       EVENT_RUN_END,
       null,
+      null,
       test,
       null
     );
@@ -211,6 +216,50 @@ describe("EVENT_RUN_END", () => {
     runReporter({}, runner, options);
 
     expect(mockOnTestRunEnd).toHaveBeenCalledTimes(1);
-    expect(innerMock).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("isCypress", () => {
+  test("if `isCypress` is true, EVENT_TEST_PASS, EVENT_TEST_FAIL & EVENT_RUN_END should do nothing", () => {
+    // prevents reporter overwriting mocked test
+    jest.spyOn(reporters, "Base").mockImplementation((reporter) => reporter);
+
+    const mockOnTestPass = jest
+      .spyOn(onTestPassObj, "onTestPass")
+      .mockImplementation(() => {});
+    const mockOnTestFail = jest
+      .spyOn(onTestFailObj, "onTestFail")
+      .mockImplementation(() => {});
+    const mockOnTestRunEnd = jest
+      .spyOn(onTestRunEndObj, "onTestRunEnd")
+      .mockImplementation(() => {});
+
+    const options = createBaseOptions();
+    const testBase = {
+      title: "",
+      slow: () => {},
+    };
+    const test1 = {
+      ...testBase,
+    };
+    const test2 = {
+      ...testBase,
+      err: { stack: "" },
+    };
+    const runner = createMockRunner(
+      "test:before:run pass fail end",
+      "test:before:run",
+      EVENT_TEST_PASS,
+      EVENT_TEST_FAIL,
+      EVENT_RUN_END,
+      test1,
+      test2
+    );
+
+    runReporter({}, runner, options);
+
+    expect(mockOnTestPass).not.toHaveBeenCalled();
+    expect(mockOnTestFail).not.toHaveBeenCalled();
+    expect(mockOnTestRunEnd).not.toHaveBeenCalled();
   });
 });

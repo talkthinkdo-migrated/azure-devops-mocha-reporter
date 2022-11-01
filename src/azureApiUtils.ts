@@ -45,7 +45,9 @@ export const createRun = async (testPlan: TestPlan) => {
   );
 
   testPlan.testRun = response.data;
-  write(`Test run created: ${testPlan.testRun.name}:${testPlan.testRun.id}`);
+  write(
+    `Azure Devops reporter - Azure Test Run created: ${testPlan.testRun.name}:${testPlan.testRun.id}`
+  );
 };
 
 export const completeRun = async (

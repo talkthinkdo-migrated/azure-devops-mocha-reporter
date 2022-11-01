@@ -38,7 +38,7 @@ describe("onTestRunEnd", () => {
     // add fake test results
     testPlanInstance.testResults.push({ testCaseId });
 
-    await onTestRunEnd(testPlanInstance)();
+    await onTestRunEnd(testPlanInstance);
 
     // Get suites from plan Id
     expect(mock.history.get[0].url).toContain(
@@ -96,7 +96,7 @@ describe("onTestRunEnd", () => {
     // mock GET test suites
     mockGetTestSuites({ planId, testSuiteId });
 
-    await onTestRunEnd(testPlanInstance)();
+    await onTestRunEnd(testPlanInstance);
 
     expect(mockWrite).toHaveBeenCalledTimes(2);
     expect(mockWrite).toHaveBeenCalledWith(messages.testsDoNotContainTestIds);
@@ -154,7 +154,7 @@ describe("onTestRunEnd", () => {
         mockStdOut.mockImplementation(() => {});
 
         try {
-          await onTestRunEnd(testPlanInstance)();
+          await onTestRunEnd(testPlanInstance);
         } catch {
           expect(mockWrite).toHaveBeenCalledWith(
             expect.stringMatching(requestRegex)
@@ -200,7 +200,7 @@ describe("onTestRunEnd", () => {
     });
 
     try {
-      await onTestRunEnd(testPlanInstance)();
+      await onTestRunEnd(testPlanInstance);
     } catch (error) {
       expect(mockCompleteRun).toHaveBeenLastCalledWith(
         expect.any(Object),
@@ -244,7 +244,7 @@ describe("onTestRunEnd", () => {
     });
 
     try {
-      await onTestRunEnd(testPlanInstance)();
+      await onTestRunEnd(testPlanInstance);
     } catch (error) {
       expect(mockCompleteRun).not.toHaveBeenCalled();
     }

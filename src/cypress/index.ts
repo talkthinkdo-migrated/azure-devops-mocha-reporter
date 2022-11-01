@@ -1,10 +1,7 @@
 /// <reference types="cypress" />
 
 import path from "path";
-import {
-  FormattedMochaTest,
-  TestPlan,
-} from "../interfaces/testPlan.interfaces";
+import { TestPlan } from "../interfaces/testPlan.interfaces";
 import { onTestFail } from "../onTestFail";
 import { onTestPass } from "../onTestPass";
 import { onTestRunEnd } from "../onTestRunEnd";
@@ -13,11 +10,9 @@ import { createTestPlan } from "../testPlan";
 let testPlan: TestPlan | null = null;
 
 export const beforeRunHook = async (details: Cypress.BeforeRunDetails) => {
-  const configFile = details.config.reporterOptions?.configFile;
-  const reporterConfig = require(path.join(process.cwd(), configFile));
-  const pluginConfig = reporterConfig.azureDevopsMochaReporterReporterOptions;
+  const reporterOptions = getReporterConfig(details);
 
-  testPlan = createTestPlan(pluginConfig);
+  testPlan = createTestPlan(reporterOptions);
 };
 
 export const afterRunHook = async (
@@ -41,7 +36,7 @@ export const afterRunHook = async (
       }
     });
 
-  await onTestRunEnd(testPlan)();
+  await onTestRunEnd(testPlan);
 };
 
 const getMochaFormattedTestResults = (
@@ -59,3 +54,16 @@ const getMochaFormattedTestResults = (
       }))
     )
     .flat();
+
+const getReporterConfig = (details: Cypress.BeforeRunDetails) => {
+  const configFile = details.config.reporterOptions?.configFile;
+  let config;
+  if (configFile !== undefined) {
+    const reporterConfig = require(path.join(process.cwd(), configFile));
+    config = reporterConfig.azureDevopsMochaReporterReporterOptions;
+  } else {
+    config = details.config.reporterOptions;
+  }
+
+  return config;
+};

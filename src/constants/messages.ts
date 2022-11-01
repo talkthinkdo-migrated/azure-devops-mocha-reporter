@@ -1,10 +1,10 @@
 export const messages = {
-  reporterStarted: "Azure Devops Mocha reporter started...",
-  resultsSubmitted: "Results submitted",
-  reporterComplete: "Azure Devops Mocha reporter complete.",
-  reportedFailedWith: "Azure Devops Mocha reporter failed with:",
+  reporterStarted: "Azure Devops reporter - Spec started...",
+  resultsSubmitted: "Azure Devops reporter - Results submitted",
+  reporterComplete: "Azure Devops reporter - Reporter complete.",
+  reportedFailedWith: "Azure Devops reporter - Failed with:",
   somethingWentWrongWithReported:
-    "Something went wrong with Azure Devops Mocha reporter.",
+    "Something went wrong with Azure Devops reporter.",
   testsDoNotContainTestIds:
-    "Your tests don't contain any ids which match an Azure test case",
+    "Your e2e tests don't contain any ids which match an Azure Test Case",
 } as const;

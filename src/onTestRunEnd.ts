@@ -12,7 +12,7 @@ import { messages } from "./constants/messages";
 import { TestPlan } from "./interfaces/testPlan.interfaces";
 import { map, pipe, write } from "./utils";
 
-export const onTestRunEnd = (testPlan: TestPlan) => async () => {
+export const onTestRunEnd = async (testPlan: TestPlan) => {
   try {
     const matchingTestPoints = await pipe(
       getTestSuites(testPlan),
