@@ -1,6 +1,12 @@
 import { Outcome } from "../enums/testPlan.enums";
 import { AxiosInstance } from "axios";
 
+export interface FormattedMochaTest {
+  title: string;
+  errorStack?: string;
+  state?: string;
+}
+
 export interface TestResult {
   testCaseId: number;
   stack: string;

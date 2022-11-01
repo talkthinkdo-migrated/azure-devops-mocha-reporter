@@ -1,14 +1,16 @@
 import { reporters, Runner } from "mocha";
-import { Outcome } from "./enums/testPlan.enums";
 import {
   MochaReporterConfig,
   ReporterOptionKeys,
   ReporterOptions,
 } from "./interfaces/reporter.interfaces";
-import { addResult, createTestPlan } from "./testPlan";
-import { getCaseIdsFromTitle, write } from "./utils";
+import { createTestPlan } from "./testPlan";
+import { write } from "./utils";
 import { messages } from "./constants/messages";
 import { onTestRunEnd } from "./onTestRunEnd";
+import { onTestPass } from "./onTestPass";
+import { onTestFail } from "./onTestFail";
+import { FormattedMochaTest } from "./interfaces/testPlan.interfaces";
 
 function cypressAzureReporter(runner: Runner, options: MochaReporterConfig) {
   const { EVENT_RUN_BEGIN, EVENT_RUN_END, EVENT_TEST_FAIL, EVENT_TEST_PASS } =
@@ -31,25 +33,17 @@ function cypressAzureReporter(runner: Runner, options: MochaReporterConfig) {
   });
 
   runner.on(EVENT_TEST_PASS, (test) => {
-    const testCaseIds = getCaseIdsFromTitle(test.title);
-    testCaseIds.forEach((testCaseId) => {
-      addResult({
-        testCaseId,
-        outcome: Outcome.Passed,
-        testPlan,
-      });
-    });
+    const formattedTest: FormattedMochaTest = {
+      title: test.title,
+    };
+    onTestPass({ test: formattedTest, testPlan });
   });
   runner.on(EVENT_TEST_FAIL, (test) => {
-    const testCaseIds = getCaseIdsFromTitle(test.title);
-    testCaseIds.forEach((testCaseId) => {
-      addResult({
-        testCaseId,
-        outcome: Outcome.Failed,
-        testPlan,
-        stack: test.err.stack,
-      });
-    });
+    const formattedTest: FormattedMochaTest = {
+      title: test.title,
+      errorStack: test.err.stack,
+    };
+    onTestFail({ test: formattedTest, testPlan });
   });
   runner.on(EVENT_RUN_END, onTestRunEnd(testPlan));
 }

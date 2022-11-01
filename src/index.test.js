@@ -5,6 +5,7 @@ import { Runner, Suite } from "mocha";
 import { Outcome } from "./enums/testPlan.enums";
 import cypressAzureReporter from "./index";
 import * as testPlan from "./testPlan";
+import * as onTestRunEnd from "./onTestRunEnd";
 import { createMockRunner, createRunReporterFunction } from "./testUtils";
 import { reporters } from "mocha";
 
@@ -178,5 +179,38 @@ describe("failed", () => {
         expect(finalResultTestIds).toStrictEqual(expectedResultIds);
       }
     });
+  });
+});
+
+describe("EVENT_RUN_END", () => {
+  test("should call onTestRunEnd", () => {
+    const innerMock = jest.fn();
+    const mockOnTestRunEnd = jest
+      .spyOn(onTestRunEnd, "onTestRunEnd")
+      .mockImplementation(() => innerMock);
+
+    const options = createBaseOptions();
+
+    var test = {
+      err: {
+        stack: "",
+      },
+      slow: () => {},
+      title: "some title",
+    };
+
+    const runner = createMockRunner(
+      "pass end",
+      EVENT_TEST_PASS,
+      EVENT_RUN_END,
+      null,
+      test,
+      null
+    );
+
+    runReporter({}, runner, options);
+
+    expect(mockOnTestRunEnd).toHaveBeenCalledTimes(1);
+    expect(innerMock).toHaveBeenCalledTimes(1);
   });
 });

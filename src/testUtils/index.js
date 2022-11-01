@@ -3,22 +3,6 @@
 --------------------------------------------------------------------------------------------- 
 */
 
-// import { MochaReporterConfig } from "../interfaces/reporter.interfaces";
-
-// interface Runner {
-//   on: Function;
-//   once: Function;
-// }
-
-// type CreateRunner = (
-//   runStr: string,
-//   ifStr1: string,
-//   ifStr2: string | null,
-//   ifStr3: string | null,
-//   arg1: any | null,
-//   arg2: any | null
-// ) => Runner;
-
 /**
  * Creates a mock runner object.
  *
