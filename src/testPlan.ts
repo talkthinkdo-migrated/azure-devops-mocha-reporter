@@ -10,6 +10,8 @@ export const createTestPlan = (options: ReporterOptions): TestPlan => {
   const project = options.project;
   const planId = options.planId;
   const runName = options.runName;
+  const shouldAttachScreenShotsToTestResults =
+    options.shouldAttachScreenShotsToTestResults || false;
 
   const azureApiRequest = axios.create({
     headers: {
@@ -28,6 +30,7 @@ export const createTestPlan = (options: ReporterOptions): TestPlan => {
     planId,
     runName,
     testRun,
+    shouldAttachScreenShotsToTestResults,
   };
 };
 

@@ -13,9 +13,10 @@ module.exports = defineConfig({
   reporter: "azure-devops-mocha-reporter",
   reporterOptions: {
     pat: process.env.PAT,
-    organisation: "ExploreLearning",
-    project: "FearlessProgramme",
-    planId: 2093,
-    runName: "Cypress Automated Run",
+    organisation: process.env.ORGANISATION,
+    project: process.env.PROJECT,
+    planId: process.env.PLAN_ID,
+    runName: process.env.RUN_NAME,
+    shouldAttachScreenShotsToTestResults: true,
   },
 });

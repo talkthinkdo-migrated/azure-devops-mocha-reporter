@@ -4,6 +4,7 @@ export interface ReporterOptions {
   planId: string;
   runName: string;
   pat: string;
+  shouldAttachScreenShotsToTestResults: boolean;
 }
 
 export type ReporterOptionKeys = keyof ReporterOptions;

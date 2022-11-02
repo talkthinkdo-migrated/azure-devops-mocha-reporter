@@ -1,7 +1,7 @@
 import theoretically from "jest-theories";
-import { getCaseIdsFromTitle } from "./utils";
+import { getCaseIdsFromString } from "./utils";
 
-describe("getCaseIdsFromTitle", () => {
+describe("getCaseIdsFromString", () => {
   const theories = [
     { input: "", expected: [] },
     { input: "1234", expected: [] },
@@ -20,7 +20,7 @@ describe("getCaseIdsFromTitle", () => {
     "should be {expected} when given {input}",
     theories,
     ({ input, expected }) => {
-      const result = getCaseIdsFromTitle(input);
+      const result = getCaseIdsFromString(input);
       expect(result).toStrictEqual(expected);
     }
   );
