@@ -77,11 +77,11 @@ export const submitTestResults =
     const passingCount = testResults.filter(
       (result) => result.outcome === Outcome.Passed
     ).length;
-    write(`Passing tests: ${passingCount}`);
+    write(`Azure Devops reporter - Passing Tests Cases: ${passingCount}`);
     const failingCount = testResults.filter(
       (result) => result.outcome === Outcome.Failed
     ).length;
-    write(`Failing tests: ${failingCount}`);
+    write(`Azure Devops reporter - Failing Tests Cases: ${failingCount}`);
     write(messages.resultsSubmitted);
   };
 
@@ -152,7 +152,7 @@ export const createTestResultAttachment = async (
   );
 
   write(
-    `Azure Devops reporter - attached screenshot for Test Case: ${testResult.testCase.id}`
+    `Azure Devops reporter - Attached screenshot for Test Case: ${testResult.testCase.id} \n "${attachment.fileName}"`
   );
 
   return response;

@@ -1,4 +1,5 @@
 import { createReadStream } from "fs";
+import path from "path";
 import {
   createTestResultAttachment,
   getTestResultsByRunId,
@@ -32,7 +33,9 @@ export const attachScreenShots = async (
             )(screenShot.path);
 
             const attachment: TestResultAttachment = {
-              fileName: "cypress-screenshot.png",
+              fileName: `cypress-screenshot--${screenShot.path
+                .split(path.sep)
+                .at(-1)}`,
               stream: base64Img,
             };
             return await createTestResultAttachment(
