@@ -1,6 +1,6 @@
 # azure-devops-mocha-reporter
 
-[![Node.js CI](https://github.com/talkthinkdo/azure-devops-mocha-reporter/actions/workflows/node.js.yml/badge.svg)](https://github.com/talkthinkdo/azure-devops-mocha-reporter/actions/workflows/node.js.yml) [![CodeQL](https://github.com/talkthinkdo/azure-devops-mocha-reporter/actions/workflows/codeql.yml/badge.svg)](https://github.com/talkthinkdo/azure-devops-mocha-reporter/actions/workflows/codeql.yml)[![Node.js Package](https://github.com/talkthinkdo/azure-devops-mocha-reporter/actions/workflows/npm-publish.yml/badge.svg)](https://github.com/talkthinkdo/azure-devops-mocha-reporter/actions/workflows/npm-publish.yml)
+[![Node.js CI](https://github.com/talkthinkdo/azure-devops-mocha-reporter/actions/workflows/node.js.yml/badge.svg)](https://github.com/talkthinkdo/azure-devops-mocha-reporter/actions/workflows/node.js.yml) [![CodeQL](https://github.com/talkthinkdo/azure-devops-mocha-reporter/actions/workflows/codeql.yml/badge.svg)](https://github.com/talkthinkdo/azure-devops-mocha-reporter/actions/workflows/codeql.yml) [![Node.js Package](https://github.com/talkthinkdo/azure-devops-mocha-reporter/actions/workflows/npm-publish.yml/badge.svg)](https://github.com/talkthinkdo/azure-devops-mocha-reporter/actions/workflows/npm-publish.yml)
 
 Performs ADO (Azure DevOps) Test Run with output from Mocha integration tests, using Test Case IDs from your tests.
 
