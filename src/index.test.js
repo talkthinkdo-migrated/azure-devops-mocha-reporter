@@ -13,12 +13,12 @@ import { reporters } from "mocha";
 
 let mock;
 
-beforeAll(() => {
-  mock?.reset();
+afterAll(() => {
+  mock.reset();
 });
 
 beforeEach(() => {
-  jest.clearAllMocks();
+  jest.restoreAllMocks();
   mock = new MockAdapter(axios);
 });
 

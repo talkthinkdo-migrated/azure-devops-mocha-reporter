@@ -136,7 +136,7 @@ export const mapTestPointToAzureTestResult =
 export const getTestResultsByRunId = async (testPlan: TestPlan) => {
   const response = await apiGet(
     testPlan,
-    `/test/Runs/${testPlan.testRun.id}/results`
+    `/test/runs/${testPlan.testRun.id}/results`
   );
   return response;
 };
@@ -147,13 +147,15 @@ export const createTestResultAttachment = async (
   attachment: TestResultAttachment
 ) => {
   const response = await testPlan.azureApiRequest.post(
-    `/test/Runs/${testPlan.testRun.id}/Results/${testResult.id}/attachments?api-version=6.0-preview.1`,
+    `/test/runs/${testPlan.testRun.id}/results/${testResult.id}/attachments?api-version=6.0-preview.1`,
     attachment
   );
 
-  write(
-    `Azure Devops reporter - Attached screenshot for Test Case: ${testResult.testCase.id} \n "${attachment.fileName}"`
-  );
+  if (response.status === 200) {
+    write(
+      `Azure Devops reporter - Attached screenshot for Test Case: ${testResult.testCase.id} \n "${attachment.fileName}"`
+    );
+  }
 
   return response;
 };

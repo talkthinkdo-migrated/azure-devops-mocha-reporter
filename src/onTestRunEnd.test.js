@@ -9,12 +9,12 @@ import * as utils from "./utils";
 
 let mock;
 
-beforeAll(() => {
-  mock?.reset();
+afterAll(() => {
+  mock.reset();
 });
 
 beforeEach(() => {
-  jest.clearAllMocks();
+  jest.restoreAllMocks();
   mock = new MockAdapter(axios);
 });
 
@@ -149,20 +149,16 @@ describe("onTestRunEnd", () => {
           errorMessage,
         });
 
-        // prevents Jest logging errors when tests pass
-        const mockStdOut = jest.spyOn(process.stdout, "write");
-        mockStdOut.mockImplementation(() => {});
-
-        try {
-          await onTestRunEnd(testPlanInstance);
-        } catch {
-          expect(mockWrite).toHaveBeenCalledWith(
-            expect.stringMatching(requestRegex)
-          );
-          expect(mockWrite).toHaveBeenCalledWith("Response: " + errorMessage);
-        }
-
-        mockStdOut.mockRestore();
+        await temporarilyPauseJestErrorLogging(async () => {
+          try {
+            await onTestRunEnd(testPlanInstance);
+          } catch {
+            expect(mockWrite).toHaveBeenCalledWith(
+              expect.stringMatching(requestRegex)
+            );
+            expect(mockWrite).toHaveBeenCalledWith("Response: " + errorMessage);
+          }
+        });
 
         expect.assertions(2);
       }
@@ -199,14 +195,16 @@ describe("onTestRunEnd", () => {
       errorMessage,
     });
 
-    try {
-      await onTestRunEnd(testPlanInstance);
-    } catch (error) {
-      expect(mockCompleteRun).toHaveBeenLastCalledWith(
-        expect.any(Object),
-        expect.stringContaining(messages.reportedFailedWith)
-      );
-    }
+    await temporarilyPauseJestErrorLogging(async () => {
+      try {
+        await onTestRunEnd(testPlanInstance);
+      } catch (error) {
+        expect(mockCompleteRun).toHaveBeenLastCalledWith(
+          expect.any(Object),
+          expect.stringContaining(messages.reportedFailedWith)
+        );
+      }
+    });
 
     expect.assertions(1);
   });
@@ -243,11 +241,13 @@ describe("onTestRunEnd", () => {
       errorMessage,
     });
 
-    try {
-      await onTestRunEnd(testPlanInstance);
-    } catch (error) {
-      expect(mockCompleteRun).not.toHaveBeenCalled();
-    }
+    await temporarilyPauseJestErrorLogging(async () => {
+      try {
+        await onTestRunEnd(testPlanInstance);
+      } catch (error) {
+        expect(mockCompleteRun).not.toHaveBeenCalled();
+      }
+    });
 
     expect.assertions(1);
   });
@@ -341,3 +341,19 @@ function mockGetTestSuites({
 
   return regex;
 }
+
+/**
+ * pauses jest error logging while in try-catch.
+ * top level catch throws it's own error, as well as extra logs
+ * this stops jest outputting confusing logs to console
+ * @param {function} tryCatchCallback
+ */
+const temporarilyPauseJestErrorLogging = async (tryCatchCallback) => {
+  // prevents Jest logging errors when tests pass
+  const mockStdOut = jest.spyOn(process.stdout, "write");
+  mockStdOut.mockImplementation(() => {});
+
+  await tryCatchCallback();
+
+  mockStdOut.mockRestore();
+};

@@ -1,4 +1,5 @@
-import { ReadStream } from "fs";
+import { Axios, AxiosError } from "axios";
+import { createReadStream, ReadStream } from "fs";
 
 /**
  * Search for all applicable test cases
@@ -17,7 +18,9 @@ export function getCaseIdsFromString(title: string): number[] {
 }
 
 export function write(str: string) {
-  process.stdout.write(str + "\n");
+  const stringWithNewLine = str + "\n";
+  process.stdout.write(stringWithNewLine);
+  return stringWithNewLine;
 }
 
 /**
@@ -52,3 +55,5 @@ export async function streamToString(stream: ReadStream) {
 
   return Buffer.concat(chunks).toString("base64");
 }
+
+export const createBase64FromFilePath = pipe(createReadStream, streamToString);
