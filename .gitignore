@@ -4,3 +4,4 @@ test/**
 .env
 cypress-and-azure-devops-*
 *.mp4
+*.png

@@ -1,9 +1,12 @@
+import { Axios, AxiosError } from "axios";
+import { createReadStream, ReadStream } from "fs";
+
 /**
  * Search for all applicable test cases
  * @param title
  * @returns {array} case ids
  */
-export function getCaseIdsFromTitle(title: string): number[] {
+export function getCaseIdsFromString(title: string): number[] {
   const caseIds = [];
   const testCaseIdRegExp = /\bT?C(\d+)\b/g;
   let m: RegExpExecArray;
@@ -15,7 +18,9 @@ export function getCaseIdsFromTitle(title: string): number[] {
 }
 
 export function write(str: string) {
-  process.stdout.write(str + "\n");
+  const stringWithNewLine = str + "\n";
+  process.stdout.write(stringWithNewLine);
+  return stringWithNewLine;
 }
 
 /**
@@ -39,3 +44,16 @@ type MapFunc = (item: any, index?: number) => any;
  * pipeable array.map
  */
 export const map = (func: MapFunc) => (array: any[]) => array.map(func);
+
+export async function streamToString(stream: ReadStream) {
+  // lets have a ReadableStream as a stream variable
+  const chunks = [];
+
+  for await (const chunk of stream) {
+    chunks.push(Buffer.from(chunk));
+  }
+
+  return Buffer.concat(chunks).toString("base64");
+}
+
+export const createBase64FromFilePath = pipe(createReadStream, streamToString);

@@ -1,11 +1,14 @@
 /// <reference types="cypress" />
 
 import path from "path";
+import { attachScreenShots } from "./attachScreenShots";
 import { TestPlan } from "../interfaces/testPlan.interfaces";
 import { onTestFail } from "../onTestFail";
 import { onTestPass } from "../onTestPass";
 import { onTestRunEnd } from "../onTestRunEnd";
 import { createTestPlan } from "../testPlan";
+import { getCaseIdsFromString } from "../utils";
+import { MappedScreenShot } from "../interfaces/cypress.interfaces";
 
 let testPlan: TestPlan | null = null;
 
@@ -20,7 +23,7 @@ export const afterRunHook = async (
 ) => {
   const tests = getMochaFormattedTestResults(results);
 
-  // create azure artifact which contains screenshots
+  // create azure artifact which contains screenShots
   // add screenshot urls to
 
   tests
@@ -37,6 +40,12 @@ export const afterRunHook = async (
     });
 
   await onTestRunEnd(testPlan);
+
+  if (testPlan.shouldAttachScreenShotsToTestResults) {
+    const screenShotPaths: MappedScreenShot[] =
+      mapScreenShotPathsAndTestCaseIds(tests);
+    await attachScreenShots(testPlan, screenShotPaths);
+  }
 };
 
 const getMochaFormattedTestResults = (
@@ -66,4 +75,17 @@ const getReporterConfig = (details: Cypress.BeforeRunDetails) => {
   }
 
   return config;
+};
+
+const mapScreenShotPathsAndTestCaseIds = (
+  tests: CypressCommandLine.TestResult[]
+) => {
+  return tests.flatMap((test) =>
+    test.attempts.flatMap((attempt) =>
+      attempt.screenshots.map((screenshot) => ({
+        path: screenshot.path,
+        ids: getCaseIdsFromString(screenshot.path),
+      }))
+    )
+  );
 };

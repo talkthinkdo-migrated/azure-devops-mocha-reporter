@@ -1,5 +1,6 @@
 import { Outcome } from "../enums/testPlan.enums";
 import { AxiosInstance } from "axios";
+import { ReadStream } from "fs";
 
 export interface FormattedMochaTest {
   title: string;
@@ -13,12 +14,25 @@ export interface TestResult {
   outcome: Outcome;
 }
 
+export interface ReceivedAzureTestResult {
+  id: number;
+  testCase: {
+    id: string;
+  };
+}
+
+interface TestRun {
+  id: number;
+  name: string;
+}
+
 export interface TestPlan {
   testResults: Array<TestResult>;
   planId: string;
   runName: string;
   azureApiRequest: AxiosInstance;
-  testRun: any;
+  testRun: TestRun;
+  shouldAttachScreenShotsToTestResults: boolean;
 }
 
 export interface TestSuite {
@@ -32,4 +46,9 @@ interface TestCaseReference {
 export interface TestPoint {
   id: string;
   testCaseReference: TestCaseReference;
+}
+
+export interface TestResultAttachment {
+  fileName: string;
+  stream: ReadStream;
 }

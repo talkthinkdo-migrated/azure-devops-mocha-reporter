@@ -1,10 +1,12 @@
 import { messages } from "./constants/messages";
 import { Outcome, TestRunState } from "./enums/testPlan.enums";
 import {
+  TestResultAttachment as TestResultAttachment,
   TestPlan,
   TestPoint,
   TestResult,
   TestSuite,
+  ReceivedAzureTestResult,
 } from "./interfaces/testPlan.interfaces";
 import { flatten, write } from "./utils";
 
@@ -75,11 +77,11 @@ export const submitTestResults =
     const passingCount = testResults.filter(
       (result) => result.outcome === Outcome.Passed
     ).length;
-    write(`Passing tests: ${passingCount}`);
+    write(`Azure Devops reporter - Passing Tests Cases: ${passingCount}`);
     const failingCount = testResults.filter(
       (result) => result.outcome === Outcome.Failed
     ).length;
-    write(`Failing tests: ${failingCount}`);
+    write(`Azure Devops reporter - Failing Tests Cases: ${failingCount}`);
     write(messages.resultsSubmitted);
   };
 
@@ -130,3 +132,30 @@ export const mapTestPointToAzureTestResult =
       stackTrace: result.stack,
     };
   };
+
+export const getTestResultsByRunId = async (testPlan: TestPlan) => {
+  const response = await apiGet(
+    testPlan,
+    `/test/runs/${testPlan.testRun.id}/results`
+  );
+  return response;
+};
+
+export const createTestResultAttachment = async (
+  testPlan: TestPlan,
+  testResult: ReceivedAzureTestResult,
+  attachment: TestResultAttachment
+) => {
+  const response = await testPlan.azureApiRequest.post(
+    `/test/runs/${testPlan.testRun.id}/results/${testResult.id}/attachments?api-version=6.0-preview.1`,
+    attachment
+  );
+
+  if (response.status === 200) {
+    write(
+      `Azure Devops reporter - Attached screenshot for Test Case: ${testResult.testCase.id} \n "${attachment.fileName}"`
+    );
+  }
+
+  return response;
+};

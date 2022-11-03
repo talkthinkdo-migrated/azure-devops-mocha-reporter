@@ -1,7 +1,7 @@
 import { Outcome } from "./enums/testPlan.enums";
 import { FormattedMochaTest, TestPlan } from "./interfaces/testPlan.interfaces";
 import { addResult } from "./testPlan";
-import { getCaseIdsFromTitle } from "./utils";
+import { getCaseIdsFromString } from "./utils";
 
 interface Args {
   test: FormattedMochaTest;
@@ -9,7 +9,7 @@ interface Args {
 }
 
 export const onTestFail = ({ test, testPlan }: Args) => {
-  const testCaseIds = getCaseIdsFromTitle(test.title);
+  const testCaseIds = getCaseIdsFromString(test.title);
   testCaseIds.forEach((testCaseId) => {
     addResult({
       testCaseId,
