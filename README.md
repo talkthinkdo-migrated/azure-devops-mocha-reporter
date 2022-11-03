@@ -8,12 +8,14 @@ Generates reports & executes Test Points.
 
 Developed for use with Cypress.io
 
-## Prerequisites
-- Pat token from Azure DevOps
-- Azure DevOps organisation name
-- Azure DevOps project name
-- Azure DevOps root Test Plan ID
-- Run name - a custom name for the Test Run
+#### Options
+| option | type | default | description |
+| --- | --- | --- | --- |
+| `pat` | string | undefined | Pat token from Azure Devops* | 
+| `organisation` | string | undefined | ORGANISATION from Azure Devops url: https://dev.azure.com/ORGANISATION/PROJECT | 
+| `project` | string | undefined | PROJECT from Azure Devops url: https://dev.azure.com/ORGANISATION/PROJECT | 
+| `planId` | number | undefined | Root Azure Test Plan id - reporter will find any Test Cases in this plan and all nested Test Suites | 
+| `runName` | string | undefined | name given to Azure Test Run | 
 
 ## Usage
 
@@ -23,11 +25,16 @@ Developed for use with Cypress.io
 npm i azure-devops-mocha-reporter
 ```
 
+#### Cypress Options
+| option | type | default | description |
+| --- | --- | --- | --- |
+| `shouldAttachScreenShotsToTestResults` | boolean | false | if Cypress tests create screenshots and are tagged with an Azure Test Case, attaches screenshot to Azure Test Result |
+
 `./package.json`
 ```JSON
 {
   "scripts": {
-    "cy:run:azure-report": "cypress run --headless --reporter azure-devops-mocha-reporter --reporterOptions pat=YOUR_ADO_PAT,organisation=YOUR_ADO_ORG,project=YOUR_ADO_PROJECT,planId=YOUR_ADO_TEST_PLAN_ID,runName=A CUSTOM RUN NAME --config defaultCommandTimeout=10000"
+    "cy:run:azure-report": "cypress run --headless --reporter azure-devops-mocha-reporter --reporterOptions pat={pat},organisation={organisation},project={project},planId={planId},runName={runName},shouldAttachScreenShotsToTestResults={shouldAttachScreenShotsToTestResults} --config defaultCommandTimeout=10000"
   }
 ```
 
@@ -86,7 +93,7 @@ npm i azure-devops-mocha-reporter
 ```JSON
 {
   "scripts": {
-    "mocha": "mocha --reporter azure-devops-mocha-reporter --reporterOptions 'pat=YOUR_ADO_PAT,organisation=YOUR_ADO_ORG,project=YOUR_ADO_PROJECT,planId=YOUR_ADO_TEST_PLAN_ID,runName=A CUSTOM RUN NAME'"
+    "mocha": "mocha --reporter azure-devops-mocha-reporter --reporterOptions 'pat={pat},organisation={organisation},project={project},planId={planId},runName={runName}'"
   }
 }
 ```
