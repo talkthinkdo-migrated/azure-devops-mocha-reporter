@@ -120,7 +120,7 @@ See the "Try it out" section for more info
 
 ## Try it out
 
-An examples are provided in the ... `./examples` directory, allowing you to test this locally against your ADO Test Plan:
+Examples are provided in the ... `./examples` directory, allowing you to test this locally against your ADO Test Plan:
 - `cd examples/cypress-single-reporter`
 - `npm i`
 - clone `.env-sample` and rename to `.env`
